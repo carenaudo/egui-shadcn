@@ -41,3 +41,7 @@ path = "examples/shadcn_demo.rs"
 [[example]]
 name = "component_dashboard"
 path = "examples/component_dashboard.rs"
+
+[[example]]
+name = "dashboard"
+path = "examples/dashboard.rs"

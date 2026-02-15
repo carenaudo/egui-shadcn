@@ -1,4 +1,4 @@
-//! Component dashboard — comprehensive demo of every egui-shadcn widget.
+// Component dashboard — comprehensive demo of every egui-shadcn widget.
 
 // ---------------------------------------------------------------------------
 // Component metadata
@@ -1720,6 +1720,7 @@ impl DashboardApp {
 // Entry point
 // ---------------------------------------------------------------------------
 
+#[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default().with_inner_size([1100.0, 750.0]),

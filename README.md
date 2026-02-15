@@ -4,6 +4,8 @@
 
 55+ beautifully styled, ready-to-use components with built-in light and dark theming. Drop-in replacements for native egui widgets plus higher-level components like dialogs, date pickers, sidebars, and more.
 
+**[Live Demo](https://pjankiewicz.github.io/egui-shadcn/)** (runs in your browser via WebAssembly)
+
 ## Quick start
 
 ```toml
@@ -29,13 +31,13 @@ ui.add(egui_shadcn::Select::new(&mut selected, &options).placeholder("Pick one..
 | Category | Widgets |
 |----------|---------|
 | **Inputs** | Button, Checkbox, Input, InputOtp, Radio, RadioGroup, Select, Slider, Switch, Textarea, Toggle, ToggleGroup, Combobox, DatePicker |
-| **Layout** | Accordion, AspectRatio, Card, Collapsible, Resizable, ScrollArea, Separator, Tabs |
+| **Layout** | Accordion, AspectRatio, Card, Collapsible, Resizable, ScrollArea, Separator, Tabs, Flex |
 | **Overlay** | AlertDialog, Command, ContextMenu, Dialog, Drawer, DropdownMenu, HoverCard, Menubar, NavigationMenu, Popover, Sheet, Tooltip |
 | **Feedback** | Alert, Badge, Progress, Skeleton, Spinner, Toast |
 | **Data** | Avatar, Breadcrumb, Calendar, Carousel, Pagination, Sidebar, Table |
 | **Typography** | Typography, Label, Kbd |
 | **Grouping** | ButtonGroup, InputGroup, FieldGroup, FieldSet, FieldLegend, FieldDescription |
-| **Icons** | 1000+ Lucide icons via `LucideIcon` |
+| **Icons** | 1600+ Lucide icons via `LucideIcon` |
 
 ## Theming
 
@@ -49,11 +51,15 @@ egui_shadcn::ShadcnThemeExt::set_shadcn_theme(ctx, dark);
 
 ## Examples
 
+Run locally:
+
 ```sh
 cargo run --example demo
 cargo run --example shadcn_demo
 cargo run --example component_dashboard
 ```
+
+Or try the [live web demo](https://pjankiewicz.github.io/egui-shadcn/).
 
 ## License
 
