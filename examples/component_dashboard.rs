@@ -33,6 +33,8 @@ const CATEGORIES: &[(&str, &[&str])] = &[
             "ToggleGroup",
             "Slider",
             "Input",
+            "NumberInput",
+            "InputGroup",
             "Textarea",
             "Select",
             "Combobox",
@@ -47,7 +49,9 @@ const CATEGORIES: &[(&str, &[&str])] = &[
             "Accordion",
             "Collapsible",
             "Tabs",
+            "IconTabs",
             "Table",
+            "Item",
             "AspectRatio",
             "ScrollArea",
             "Resizable",
@@ -81,6 +85,14 @@ const CATEGORIES: &[(&str, &[&str])] = &[
     (
         "Feedback",
         &["Toast", "Carousel", "Calendar", "DatePicker"],
+    ),
+    (
+        "Data Visualization",
+        &["AreaChart"],
+    ),
+    (
+        "Form Layout",
+        &["FieldGroup"],
     ),
 ];
 
@@ -149,6 +161,12 @@ struct DashboardApp {
     calendar_day: u32,
     date_picker_state: egui_shadcn::DatePickerState,
     progress_val: f32,
+    number_f64: f64,
+    number_f32: f32,
+    number_i32: i32,
+    input_group_text: String,
+    icon_tabs_idx: usize,
+    button_selected: bool,
     icon_search: String,
     flex_input_text: String,
     flex_first_name: String,
@@ -198,6 +216,12 @@ impl Default for DashboardApp {
             calendar_day: 14,
             date_picker_state: egui_shadcn::DatePickerState::default(),
             progress_val: 0.66,
+            number_f64: 42.0,
+            number_f32: 3.14,
+            number_i32: 10,
+            input_group_text: String::new(),
+            icon_tabs_idx: 0,
+            button_selected: false,
             icon_search: String::new(),
             flex_input_text: String::new(),
             flex_first_name: String::new(),
@@ -440,6 +464,8 @@ impl DashboardApp {
             "ToggleGroup" => self.demo_toggle_group(ui),
             "Slider" => self.demo_slider(ui),
             "Input" => self.demo_input(ui),
+            "NumberInput" => self.demo_number_input(ui),
+            "InputGroup" => self.demo_input_group(ui),
             "Textarea" => self.demo_textarea(ui),
             "Select" => self.demo_select(ui),
             "Combobox" => self.demo_combobox(ui),
@@ -449,7 +475,9 @@ impl DashboardApp {
             "Accordion" => self.demo_accordion(ui),
             "Collapsible" => self.demo_collapsible(ui),
             "Tabs" => self.demo_tabs(ui),
+            "IconTabs" => self.demo_icon_tabs(ui),
             "Table" => self.demo_table(ui),
+            "Item" => self.demo_item(ui),
             "AspectRatio" => self.demo_aspect_ratio(ui, theme),
             "ScrollArea" => self.demo_scroll_area(ui),
             "Resizable" => self.demo_resizable(ui),
@@ -472,6 +500,8 @@ impl DashboardApp {
             "Carousel" => self.demo_carousel(ui),
             "Calendar" => self.demo_calendar(ui),
             "DatePicker" => self.demo_date_picker(ui),
+            "AreaChart" => self.demo_area_chart(ui),
+            "FieldGroup" => self.demo_field_group(ui),
             _ => {
                 ui.label("No demo available.");
             }
@@ -872,7 +902,7 @@ impl DashboardApp {
 
     // ── Inputs ────────────────────────────────────────────────────────
 
-    fn demo_button(&self, ui: &mut egui::Ui) {
+    fn demo_button(&mut self, ui: &mut egui::Ui) {
         egui_shadcn::Typography::muted("Clickable buttons with variant styles and sizes.")
             .show(ui);
         ui.add_space(12.0);
@@ -958,6 +988,47 @@ impl DashboardApp {
                 .icon(egui_shadcn::LucideIcon::Copy)
                 .variant(egui_shadcn::ButtonVariant::Ghost)
                 .size(egui_shadcn::ComponentSize::Sm)
+                .show(ui);
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("Shortcut Text").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::Button::new("Save")
+                .variant(egui_shadcn::ButtonVariant::Outline)
+                .shortcut_text("Cmd+S")
+                .show(ui);
+            egui_shadcn::Button::new("Open")
+                .variant(egui_shadcn::ButtonVariant::Outline)
+                .shortcut_text("Cmd+O")
+                .show(ui);
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("Selected (toggle)").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            if egui_shadcn::Button::new("Toggle Me")
+                .variant(egui_shadcn::ButtonVariant::Outline)
+                .selected(self.button_selected)
+                .show(ui)
+                .clicked()
+            {
+                self.button_selected = !self.button_selected;
+            }
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("Disabled").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::Button::new("Disabled")
+                .enabled(false)
+                .show(ui);
+            egui_shadcn::Button::new("Disabled Outline")
+                .variant(egui_shadcn::ButtonVariant::Outline)
+                .enabled(false)
                 .show(ui);
         });
 
@@ -1565,6 +1636,8 @@ impl DashboardApp {
         egui_shadcn::Typography::muted("Dropdown menu triggered by a button click.").show(ui);
         ui.add_space(12.0);
 
+        egui_shadcn::Typography::small("Simple").show(ui);
+        ui.add_space(4.0);
         let trigger = egui_shadcn::Button::new("Open Menu")
             .variant(egui_shadcn::ButtonVariant::Outline)
             .show(ui);
@@ -1572,6 +1645,26 @@ impl DashboardApp {
             ui,
             &trigger,
             &["Profile", "Settings", "Billing", "Sign Out"],
+            |_idx| {},
+        );
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("Rich (shortcuts, separators, disabled)").show(ui);
+        ui.add_space(4.0);
+        let trigger2 = egui_shadcn::Button::new("File Menu")
+            .variant(egui_shadcn::ButtonVariant::Outline)
+            .show(ui);
+        egui_shadcn::DropdownMenu::show_rich(
+            ui,
+            &trigger2,
+            &[
+                egui_shadcn::MenuItem::with_shortcut("New File", "Cmd+N"),
+                egui_shadcn::MenuItem::with_shortcut("Open...", "Cmd+O"),
+                egui_shadcn::MenuItem::with_shortcut("Save", "Cmd+S"),
+                egui_shadcn::MenuItem::separator(),
+                egui_shadcn::MenuItem::label("Export as PDF"),
+                egui_shadcn::MenuItem::full("Share...", None, false),
+            ],
             |_idx| {},
         );
     }
@@ -1700,6 +1793,219 @@ impl DashboardApp {
                 self.calendar_year, self.calendar_month, self.calendar_day
             ));
         }
+    }
+
+    // ── New Inputs ─────────────────────────────────────────────────
+
+    fn demo_number_input(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Numeric input with drag, range, prefix/suffix.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::Typography::small("f64 with range and suffix").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::NumberInput::new(&mut self.number_f64)
+                .range(0.0..=100.0)
+                .speed(0.5)
+                .suffix("px")
+                .width(100.0)
+                .show(ui);
+            ui.label(format!("{:.1}", self.number_f64));
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("f32 with decimals and prefix").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::NumberInput::f32(&mut self.number_f32)
+                .decimals(2)
+                .prefix("$")
+                .width(80.0)
+                .show(ui);
+            ui.label(format!("{:.2}", self.number_f32));
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("i32 integer").show(ui);
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::NumberInput::i32(&mut self.number_i32)
+                .range(0.0..=50.0)
+                .width(60.0)
+                .show(ui);
+            ui.label(format!("{}", self.number_i32));
+        });
+    }
+
+    fn demo_input_group(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Input with prefix text and suffix addons.").show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::Typography::small("With prefix").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::InputGroup::show(
+            ui,
+            &mut self.input_group_text,
+            "example.com",
+            Some("https://"),
+            None::<fn(&mut egui::Ui)>,
+        );
+
+        ui.add_space(12.0);
+        egui_shadcn::Typography::small("With prefix and suffix button").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::InputGroup::show(
+            ui,
+            &mut self.input_group_text,
+            "Search...",
+            None,
+            Some(|ui: &mut egui::Ui| {
+                egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Search)
+                    .variant(egui_shadcn::ButtonVariant::Ghost)
+                    .size(egui_shadcn::ComponentSize::Sm)
+                    .show(ui);
+            }),
+        );
+    }
+
+    // ── New Containers ───────────────────────────────────────────
+
+    fn demo_icon_tabs(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Icon-based tabs with tooltips.").show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::IconTabs::new(vec![
+            egui_shadcn::TabEntry::Icon {
+                icon: egui_shadcn::LucideIcon::House,
+                tooltip: "Home".to_owned(),
+            },
+            egui_shadcn::TabEntry::Icon {
+                icon: egui_shadcn::LucideIcon::Settings,
+                tooltip: "Settings".to_owned(),
+            },
+            egui_shadcn::TabEntry::Icon {
+                icon: egui_shadcn::LucideIcon::CircleUser,
+                tooltip: "Profile".to_owned(),
+            },
+            egui_shadcn::TabEntry::Icon {
+                icon: egui_shadcn::LucideIcon::Bell,
+                tooltip: "Notifications".to_owned(),
+            },
+        ])
+        .show(ui, &mut self.icon_tabs_idx, |ui, idx| match idx {
+            0 => { ui.label("Home content"); }
+            1 => { ui.label("Settings content"); }
+            2 => { ui.label("Profile content"); }
+            _ => { ui.label("Notifications content"); }
+        });
+    }
+
+    fn demo_item(&self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("List item container with variant styles.").show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::Typography::small("Default (no border)").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::Item::new().show(ui, |ui| {
+            ui.horizontal(|ui| {
+                egui_shadcn::Avatar::new("JD").show(ui);
+                ui.vertical(|ui| {
+                    ui.label("John Doe");
+                    egui_shadcn::Typography::muted("john@example.com").show(ui);
+                });
+            });
+        });
+
+        ui.add_space(8.0);
+        egui_shadcn::Typography::small("Outline variant").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::Item::new()
+            .variant(egui_shadcn::ItemVariant::Outline)
+            .show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    egui_shadcn::Avatar::new("AB").show(ui);
+                    ui.vertical(|ui| {
+                        ui.label("Alice Brown");
+                        egui_shadcn::Typography::muted("alice@example.com").show(ui);
+                    });
+                });
+            });
+    }
+
+    // ── Data Visualization ───────────────────────────────────────
+
+    fn demo_area_chart(&self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Smooth stacked area chart with Catmull-Rom curves.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        let labels: Vec<String> = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+
+        egui_shadcn::Typography::small("Single series").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::AreaChart::new(labels.clone())
+            .series(egui_shadcn::AreaSeries {
+                values: vec![20.0, 45.0, 35.0, 60.0, 50.0, 75.0],
+                color: egui::Color32::from_rgb(99, 102, 241), // indigo
+            })
+            .height(180.0)
+            .show(ui);
+
+        ui.add_space(16.0);
+        egui_shadcn::Typography::small("Stacked series").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::AreaChart::new(labels)
+            .series(egui_shadcn::AreaSeries {
+                values: vec![30.0, 40.0, 35.0, 50.0, 49.0, 60.0],
+                color: egui::Color32::from_rgb(99, 102, 241),
+            })
+            .series(egui_shadcn::AreaSeries {
+                values: vec![20.0, 30.0, 45.0, 25.0, 35.0, 40.0],
+                color: egui::Color32::from_rgb(16, 185, 129), // emerald
+            })
+            .stacked()
+            .height(200.0)
+            .show(ui);
+    }
+
+    // ── Form Layout ──────────────────────────────────────────────
+
+    fn demo_field_group(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Form layout utilities: FieldGroup, FieldSet, FieldLegend, FieldDescription.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::FieldGroup::show(ui, |ui| {
+            egui_shadcn::FieldSet::show(ui, "Personal Information", |ui| {
+                egui_shadcn::Label::new("First Name").show(ui);
+                egui_shadcn::Input::new(&mut self.flex_first_name)
+                    .placeholder("John")
+                    .desired_width(300.0)
+                    .show(ui);
+                egui_shadcn::FieldDescription::show(ui, "Your legal first name.");
+
+                ui.add_space(8.0);
+
+                egui_shadcn::Label::new("Last Name").show(ui);
+                egui_shadcn::Input::new(&mut self.flex_last_name)
+                    .placeholder("Doe")
+                    .desired_width(300.0)
+                    .show(ui);
+            });
+
+            egui_shadcn::FieldSet::show(ui, "Contact", |ui| {
+                egui_shadcn::Label::new("Email").show(ui);
+                egui_shadcn::Input::new(&mut self.flex_email)
+                    .placeholder("john@example.com")
+                    .desired_width(300.0)
+                    .show(ui);
+                egui_shadcn::FieldDescription::show(ui, "We will never share your email.");
+            });
+        });
     }
 
     fn demo_date_picker(&mut self, ui: &mut egui::Ui) {
