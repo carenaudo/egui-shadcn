@@ -6,6 +6,7 @@ pub struct Table {
     pub(crate) headers: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
     pub(crate) striped: bool,
+    pub(crate) col_weights: Option<Vec<f32>>,
 }
 
 impl Table {
@@ -14,6 +15,7 @@ impl Table {
             headers,
             rows: Vec::new(),
             striped: false,
+            col_weights: None,
         }
     }
 
@@ -24,6 +26,11 @@ impl Table {
 
     pub fn striped(mut self) -> Self {
         self.striped = true;
+        self
+    }
+
+    pub fn col_weights(mut self, weights: Vec<f32>) -> Self {
+        self.col_weights = Some(weights);
         self
     }
 }

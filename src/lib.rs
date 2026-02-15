@@ -73,6 +73,8 @@ pub use widgets::sheet::sheet::Sheet;
 pub use widgets::sidebar::sidebar::Sidebar;
 pub use widgets::skeleton::skeleton::Skeleton;
 pub use widgets::table::table::Table;
+pub use widgets::area_chart::area_chart::AreaChart;
+pub use widgets::area_chart::area_chart::AreaSeries;
 pub use widgets::tabs::tabs::Tabs;
 pub use widgets::toast::toast_state::ToastState;
 pub use widgets::toast::toast_entry::ToastEntry;

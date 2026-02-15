@@ -55,3 +55,4 @@ pub mod input_otp;
 pub mod toast;
 pub mod carousel;
 pub mod sidebar;
+pub mod area_chart;
