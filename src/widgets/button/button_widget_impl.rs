@@ -91,12 +91,16 @@ impl egui::Widget for super::button::Button<'_> {
             ui.allocate_exact_size(desired, egui::Sense::click())
         };
 
-        // Record boundary in group context
+        // Record boundary and rect in group context
         if in_group {
             ui.ctx().data_mut(|d| {
                 if let Some(mut ctx) = d.get_temp::<crate::widgets::button_group::button_group_context::ButtonGroupContext>(group_key) {
                     if ctx.active {
                         ctx.boundaries.push(rect.max.x);
+                        ctx.group_rect = Some(match ctx.group_rect {
+                            Some(r) => r.union(rect),
+                            None => rect,
+                        });
                         d.insert_temp(group_key, ctx);
                     }
                 }

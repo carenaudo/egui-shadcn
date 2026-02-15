@@ -14,4 +14,6 @@ pub struct ButtonGroupContext {
     pub current_index: usize,
     /// The group's corner radius.
     pub corner_radius: f32,
+    /// Union rect of all buttons in the group so far.
+    pub group_rect: Option<egui::Rect>,
 }

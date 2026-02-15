@@ -1,4 +1,7 @@
 //! Show method for ButtonGroup — renders buttons in a connected strip.
+//!
+//! Buttons are placed directly in the parent layout (no nested horizontal)
+//! to preserve baseline alignment with sibling widgets.
 
 impl super::button_group::ButtonGroup {
     /// The egui temp data key for the active button group context.
@@ -9,6 +12,10 @@ impl super::button_group::ButtonGroup {
     /// Renders a connected button group. Pass buttons inside the closure.
     /// Buttons detect the active context and render with per-corner radii:
     /// first button gets left rounding, last button gets right rounding.
+    ///
+    /// Buttons are placed directly in the parent UI (no nested layout scope)
+    /// so they share the same vertical alignment context as siblings,
+    /// matching how web shadcn/ui works with CSS flexbox.
     pub fn show(
         ui: &mut egui::Ui,
         content: impl FnOnce(&mut egui::Ui),
@@ -34,17 +41,21 @@ impl super::button_group::ButtonGroup {
                     cached_count,
                     current_index: 0,
                     corner_radius: cr,
+                    group_rect: None,
                 },
             );
         });
 
-        let result = ui.horizontal(|ui| {
-            ui.spacing_mut().item_spacing.x = 0.0;
-            content(ui);
-        });
+        // Place buttons directly in the parent UI — set spacing to 0 temporarily
+        let old_spacing_x = ui.spacing().item_spacing.x;
+        ui.spacing_mut().item_spacing.x = 0.0;
 
-        // Read boundaries, final count, and deactivate
-        let (boundaries, final_count) = ui.ctx().data_mut(|d| {
+        content(ui);
+
+        ui.spacing_mut().item_spacing.x = old_spacing_x;
+
+        // Read boundaries, group rect, final count, and deactivate
+        let (boundaries, group_rect, final_count) = ui.ctx().data_mut(|d| {
             let ctx = d
                 .get_temp::<super::button_group_context::ButtonGroupContext>(key);
             d.insert_temp(
@@ -54,7 +65,7 @@ impl super::button_group::ButtonGroup {
                     ..Default::default()
                 },
             );
-            ctx.map(|c| (c.boundaries, c.current_index))
+            ctx.map(|c| (c.boundaries, c.group_rect, c.current_index))
                 .unwrap_or_default()
         });
 
@@ -62,8 +73,10 @@ impl super::button_group::ButtonGroup {
         ui.ctx()
             .data_mut(|d| d.insert_temp(count_key, final_count));
 
-        // Draw outer ring and dividers
-        let rect = result.response.rect;
+        // Draw outer ring and dividers using the union rect from buttons
+        let rect = group_rect.unwrap_or(egui::Rect::NOTHING);
+        let response = ui.interact(rect, ui.auto_id_with("btn_group_ring"), egui::Sense::hover());
+
         if ui.is_rect_visible(rect) {
             let ring_color = egui::Color32::from_rgba_unmultiplied(
                 theme.foreground.r(),
@@ -92,6 +105,6 @@ impl super::button_group::ButtonGroup {
             }
         }
 
-        result
+        egui::InnerResponse { inner: (), response }
     }
 }

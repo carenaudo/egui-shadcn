@@ -5,6 +5,7 @@
 pub struct Label {
     pub(crate) text: String,
     pub(crate) muted: bool,
+    pub(crate) size: Option<crate::tokens::component_size::ComponentSize>,
 }
 
 impl Label {
@@ -12,12 +13,20 @@ impl Label {
         Self {
             text: text.into(),
             muted: false,
+            size: None,
         }
     }
 
     /// Use muted foreground color.
     pub fn muted(mut self) -> Self {
         self.muted = true;
+        self
+    }
+
+    /// Match a component size for consistent baseline alignment with buttons.
+    /// Sets both the font size and allocated height to match the given size.
+    pub fn size(mut self, size: crate::tokens::component_size::ComponentSize) -> Self {
+        self.size = Some(size);
         self
     }
 

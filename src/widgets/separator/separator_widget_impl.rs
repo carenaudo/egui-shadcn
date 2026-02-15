@@ -64,7 +64,11 @@ impl egui::Widget for super::separator::Separator {
                 response
             }
         } else {
-            let desired = egui::vec2(1.0, ui.available_height());
+            // Use a modest height instead of available_height() to avoid inflating
+            // the row height in horizontal layouts. The line is painted over the
+            // full row via min_rect after all siblings are laid out.
+            let height = ui.spacing().interact_size.y.max(16.0);
+            let desired = egui::vec2(1.0, height);
             let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::hover());
 
             if ui.is_rect_visible(rect) {
