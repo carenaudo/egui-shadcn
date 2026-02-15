@@ -1,0 +1,6 @@
+/target
+/references
+Cargo.lock
+.idea/
+.claude/
+.DS_Store
