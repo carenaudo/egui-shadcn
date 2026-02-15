@@ -8,22 +8,30 @@ impl egui::Widget for super::checkbox::Checkbox<'_> {
         let corner_radius = 4.0;
         let spacing = 8.0;
 
-        // Layout: box + optional label
+        // Layout: box + optional label (use Button text style to match menu items)
+        let label_font = ui
+            .style()
+            .text_styles
+            .get(&egui::TextStyle::Button)
+            .cloned()
+            .unwrap_or_else(|| egui::FontId::proportional(14.0));
         let label_galley = self.label.map(|l| {
             ui.painter().layout_no_wrap(
                 l.text().to_owned(),
-                egui::FontId::proportional(14.0),
+                label_font,
                 theme.foreground,
             )
         });
 
         let label_width = label_galley.as_ref().map_or(0.0, |g| g.size().x + spacing);
-        let desired = egui::vec2(box_size + label_width, box_size.max(20.0));
+        let row_height = ui.spacing().interact_size.y.max(box_size);
+        let desired = egui::vec2(box_size + label_width, row_height);
 
-        let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::click());
+        let (rect, mut response) = ui.allocate_exact_size(desired, egui::Sense::click());
 
         if response.clicked() {
             *self.checked = !*self.checked;
+            response.mark_changed();
             response.ctx.request_repaint();
         }
 

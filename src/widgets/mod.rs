@@ -56,3 +56,4 @@ pub mod toast;
 pub mod carousel;
 pub mod sidebar;
 pub mod area_chart;
+pub mod number_input;

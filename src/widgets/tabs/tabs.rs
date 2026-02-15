@@ -11,3 +11,24 @@ impl Tabs {
         Self { labels }
     }
 }
+
+/// Tab entry that can be a text label or icon with tooltip.
+pub enum TabEntry {
+    Text(String),
+    Icon {
+        icon: crate::icons::lucide_icon::LucideIcon,
+        tooltip: String,
+    },
+}
+
+/// Icon-based tabs variant.
+#[must_use]
+pub struct IconTabs {
+    pub(crate) entries: Vec<TabEntry>,
+}
+
+impl IconTabs {
+    pub fn new(entries: Vec<TabEntry>) -> Self {
+        Self { entries }
+    }
+}

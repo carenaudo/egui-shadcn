@@ -41,8 +41,12 @@ pub fn resolve_button_style(
     };
 
     if disabled {
-        bg = with_alpha(bg, 128);
-        fg = with_alpha(fg, 128);
+        // Keep transparent backgrounds transparent (Ghost, Link) so
+        // disabled menu items don't get a gray box.
+        if bg.a() > 0 {
+            bg = with_alpha(bg, 128);
+        }
+        fg = theme.muted_foreground;
     } else if active {
         bg = with_alpha(bg, 204); // 80%
     } else if hovered {
