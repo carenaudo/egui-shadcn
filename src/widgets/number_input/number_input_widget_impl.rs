@@ -20,14 +20,9 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
         let desired = egui::vec2(width, height);
         let (outer_rect, _) = ui.allocate_exact_size(desired, egui::Sense::hover());
 
-        // Paint background and border
+        // Paint background only — border is drawn after DragValue so we
+        // can choose between the regular border and the focus ring.
         ui.painter().rect_filled(outer_rect, cr, theme.muted);
-        ui.painter().rect_stroke(
-            outer_rect,
-            cr,
-            egui::Stroke::new(1.0, theme.input),
-            egui::epaint::StrokeKind::Inside,
-        );
 
         // Inner region with padding
         let inner_rect = egui::Rect::from_min_max(
@@ -75,16 +70,29 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
         let remaining_width = child_ui.available_width();
         child_ui.set_max_width(remaining_width);
 
-        // Style overrides for the DragValue
-        child_ui.style_mut().visuals.widgets.inactive.bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.inactive.weak_bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.inactive.bg_stroke = egui::Stroke::NONE;
-        child_ui.style_mut().visuals.widgets.hovered.bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.hovered.weak_bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.hovered.bg_stroke = egui::Stroke::NONE;
-        child_ui.style_mut().visuals.widgets.active.bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.active.weak_bg_fill = egui::Color32::TRANSPARENT;
-        child_ui.style_mut().visuals.widgets.active.bg_stroke = egui::Stroke::NONE;
+        // Style overrides — suppress ALL inner backgrounds/borders so only our
+        // outer rect draws the visual chrome (prevents double-border on focus).
+        {
+            let wv = &mut child_ui.style_mut().visuals.widgets;
+            wv.inactive.bg_fill = egui::Color32::TRANSPARENT;
+            wv.inactive.weak_bg_fill = egui::Color32::TRANSPARENT;
+            wv.inactive.bg_stroke = egui::Stroke::NONE;
+            wv.hovered.bg_fill = egui::Color32::TRANSPARENT;
+            wv.hovered.weak_bg_fill = egui::Color32::TRANSPARENT;
+            wv.hovered.bg_stroke = egui::Stroke::NONE;
+            wv.active.bg_fill = egui::Color32::TRANSPARENT;
+            wv.active.weak_bg_fill = egui::Color32::TRANSPARENT;
+            wv.active.bg_stroke = egui::Stroke::NONE;
+            wv.noninteractive.bg_fill = egui::Color32::TRANSPARENT;
+            wv.noninteractive.bg_stroke = egui::Stroke::NONE;
+            wv.open.bg_fill = egui::Color32::TRANSPARENT;
+            wv.open.bg_stroke = egui::Stroke::NONE;
+        }
+        // Prevent the TextEdit (when DragValue enters editing mode) from
+        // drawing its own dark background — it uses extreme_bg_color.
+        child_ui.style_mut().visuals.extreme_bg_color = egui::Color32::TRANSPARENT;
+        // Keep text selection highlight visible.
+        child_ui.style_mut().visuals.selection.bg_fill = theme.primary;
 
         let response = child_ui.add(dv);
 
@@ -95,12 +103,19 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
             super::number_input::ValueRef::I32(v) => *v = proxy.round() as i32,
         }
 
-        // Focus ring
+        // Single border: focus ring when focused, regular border otherwise.
         if response.has_focus() || response.dragged() {
             ui.painter().rect_stroke(
                 outer_rect,
                 cr,
                 egui::Stroke::new(1.0, theme.ring),
+                egui::epaint::StrokeKind::Inside,
+            );
+        } else {
+            ui.painter().rect_stroke(
+                outer_rect,
+                cr,
+                egui::Stroke::new(1.0, theme.input),
                 egui::epaint::StrokeKind::Inside,
             );
         }
