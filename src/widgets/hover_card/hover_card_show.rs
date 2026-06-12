@@ -2,12 +2,9 @@
 
 impl super::hover_card::HoverCard {
     /// Shows a hover card when `trigger_response` is hovered.
-    pub fn show(
-        self,
-        trigger_response: &egui::Response,
-        content: impl FnOnce(&mut egui::Ui),
-    ) {
-        let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(&trigger_response.ctx);
+    pub fn show(self, trigger_response: &egui::Response, content: impl FnOnce(&mut egui::Ui)) {
+        let theme =
+            crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(&trigger_response.ctx);
         let cr = (theme.radius + 2.0).round() as u8;
 
         let themed_frame = egui::Frame::NONE
@@ -26,6 +23,7 @@ impl super::hover_card::HoverCard {
         tooltip.popup = tooltip.popup.at_pointer().gap(12.0).frame(themed_frame);
 
         tooltip.show(|ui| {
+            ui.style_mut().visuals.override_text_color = Some(theme.popover_foreground);
             ui.set_min_width(self.width);
             content(ui);
         });

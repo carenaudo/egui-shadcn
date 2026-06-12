@@ -5,6 +5,7 @@
 pub struct Combobox {
     pub(crate) items: Vec<String>,
     pub(crate) placeholder: String,
+    pub(crate) width: Option<f32>,
 }
 
 impl Combobox {
@@ -12,11 +13,17 @@ impl Combobox {
         Self {
             items,
             placeholder: "Select...".to_owned(),
+            width: None,
         }
     }
 
     pub fn placeholder(mut self, text: impl Into<String>) -> Self {
         self.placeholder = text.into();
+        self
+    }
+
+    pub fn width(mut self, width: f32) -> Self {
+        self.width = Some(width);
         self
     }
 }

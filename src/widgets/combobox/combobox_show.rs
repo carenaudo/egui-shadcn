@@ -22,31 +22,41 @@ impl super::combobox::Combobox {
             theme.muted_foreground
         };
 
-        // Trigger button: text + chevron icon
+        // Trigger button: framed text + chevron icon
         let icon_size: f32 = 12.0;
-        let gap: f32 = 4.0;
-        let galley = ui.painter().layout_no_wrap(
-            display,
-            egui::FontId::proportional(14.0),
-            text_color,
-        );
-        let desired = egui::vec2(
-            galley.size().x + gap + icon_size + 4.0,
-            galley.size().y.max(icon_size),
-        );
-        let (trigger_rect, trigger) =
-            ui.allocate_exact_size(desired, egui::Sense::click());
+        let h_padding: f32 = 10.0;
+        let height: f32 = 36.0;
+        let width = self.width.unwrap_or(220.0).min(ui.available_width());
+        let galley =
+            ui.painter()
+                .layout_no_wrap(display, egui::FontId::proportional(14.0), text_color);
+        let desired = egui::vec2(width, height);
+        let (trigger_rect, trigger) = ui.allocate_exact_size(desired, egui::Sense::click());
 
         if ui.is_rect_visible(trigger_rect) {
+            let cr = egui::CornerRadius::same(theme.radius.round() as u8);
+            let bg = if trigger.hovered() {
+                theme.accent
+            } else {
+                theme.background
+            };
+            ui.painter().rect_filled(trigger_rect, cr, bg);
+            ui.painter().rect_stroke(
+                trigger_rect,
+                cr,
+                egui::Stroke::new(1.0, theme.input),
+                egui::epaint::StrokeKind::Inside,
+            );
+
             let text_pos = egui::pos2(
-                trigger_rect.min.x,
+                trigger_rect.min.x + h_padding,
                 trigger_rect.center().y - galley.size().y / 2.0,
             );
             ui.painter().galley(text_pos, galley, text_color);
 
             let icon_rect = egui::Rect::from_min_size(
                 egui::pos2(
-                    trigger_rect.max.x - icon_size,
+                    trigger_rect.max.x - h_padding - icon_size,
                     trigger_rect.center().y - icon_size / 2.0,
                 ),
                 egui::vec2(icon_size, icon_size),
@@ -80,19 +90,16 @@ impl super::combobox::Combobox {
                 color: egui::Color32::from_black_alpha(8),
             });
 
-        let popup = egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            &trigger,
-            ui.layer_id(),
-        )
-        .open_memory(toggle_cmd)
-        .frame(themed_frame);
+        let popup = egui::Popup::new(popup_id, ui.ctx().clone(), &trigger, ui.layer_id())
+            .open_memory(toggle_cmd)
+            .frame(themed_frame);
 
         let mut close = false;
 
         popup.show(|ui: &mut egui::Ui| {
-            ui.set_min_width(200.0);
+            let popup_width = trigger_rect.width().max(200.0);
+            ui.set_min_width(popup_width);
+            ui.set_max_width(popup_width);
 
             // Themed search input
             let input_resp = crate::widgets::input::input::Input::new(search_text)
@@ -132,17 +139,15 @@ impl super::combobox::Combobox {
                         theme.popover_foreground,
                     );
                     let desired = egui::vec2(
-                        ui.available_width().max(galley.size().x + item_left_pad + 8.0),
+                        ui.available_width()
+                            .max(galley.size().x + item_left_pad + 8.0),
                         galley.size().y + 8.0,
                     );
                     let (rect, r) = ui.allocate_exact_size(desired, egui::Sense::click());
 
                     if r.hovered() || is_selected {
-                        ui.painter().rect_filled(
-                            rect,
-                            egui::CornerRadius::same(4),
-                            theme.accent,
-                        );
+                        ui.painter()
+                            .rect_filled(rect, egui::CornerRadius::same(4), theme.accent);
                     }
 
                     if ui.is_rect_visible(rect) {

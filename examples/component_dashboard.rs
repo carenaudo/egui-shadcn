@@ -118,6 +118,40 @@ fn component_name(flat: usize) -> &'static str {
     ""
 }
 
+#[cfg(target_arch = "wasm32")]
+fn component_index(name: &str) -> Option<usize> {
+    let needle = name.trim().to_ascii_lowercase();
+    CATEGORIES
+        .iter()
+        .flat_map(|(_, items)| items.iter())
+        .position(|item| item.to_ascii_lowercase() == needle)
+}
+
+#[cfg(target_arch = "wasm32")]
+fn initial_selected_component() -> usize {
+    selected_component_from_query().unwrap_or(0)
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn initial_selected_component() -> usize {
+    0
+}
+
+#[cfg(target_arch = "wasm32")]
+fn selected_component_from_query() -> Option<usize> {
+    let search = web_sys::window()?.location().search().ok()?;
+    let query = search.strip_prefix('?').unwrap_or(&search);
+
+    query.split('&').find_map(|pair| {
+        let (key, value) = pair.split_once('=')?;
+        if key == "component" {
+            component_index(value)
+        } else {
+            None
+        }
+    })
+}
+
 // ---------------------------------------------------------------------------
 // App state
 // ---------------------------------------------------------------------------
@@ -191,7 +225,7 @@ impl Default for DashboardApp {
     fn default() -> Self {
         Self {
             dark_mode: true,
-            selected: 0,
+            selected: initial_selected_component(),
             checkbox_val: false,
             switch_val: false,
             radio_a: true,
