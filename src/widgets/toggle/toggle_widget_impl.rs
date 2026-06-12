@@ -11,10 +11,7 @@ impl egui::Widget for super::toggle::Toggle<'_> {
             theme.foreground,
         );
 
-        let desired = egui::vec2(
-            text_galley.size().x + h_padding * 2.0,
-            height,
-        );
+        let desired = egui::vec2(text_galley.size().x + h_padding * 2.0, height);
 
         let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::click());
 
@@ -24,12 +21,20 @@ impl egui::Widget for super::toggle::Toggle<'_> {
         }
 
         if ui.is_rect_visible(rect) {
-            let style = super::toggle_style::resolve_toggle_style(
+            let mut style = super::toggle_style::resolve_toggle_style(
                 &theme,
                 self.variant,
                 *self.pressed,
                 response.hovered(),
             );
+            if response.is_pointer_button_down_on() {
+                style.bg = crate::paint::interpolate_color::interpolate_color(
+                    style.bg,
+                    theme.accent,
+                    0.65,
+                );
+                style.fg = theme.accent_foreground;
+            }
             let painter = ui.painter();
             let cr = egui::CornerRadius::same(style.corner_radius.round() as u8);
 
@@ -58,6 +63,10 @@ impl egui::Widget for super::toggle::Toggle<'_> {
                     theme.ring,
                 );
             }
+        }
+
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response

@@ -35,6 +35,16 @@ impl super::navigation_menu::NavigationMenu {
 
                     if is_active {
                         ui.painter().rect_filled(rect, cr, theme.accent);
+                    } else if response.is_pointer_button_down_on() {
+                        ui.painter().rect_filled(
+                            rect,
+                            cr,
+                            crate::paint::interpolate_color::interpolate_color(
+                                theme.accent,
+                                theme.primary,
+                                0.12,
+                            ),
+                        );
                     } else if response.hovered() {
                         ui.painter().rect_filled(rect, cr, theme.accent);
                     }

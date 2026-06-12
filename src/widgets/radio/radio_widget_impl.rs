@@ -26,20 +26,26 @@ impl egui::Widget for super::radio::Radio<'_> {
             response.ctx.request_repaint();
         }
 
-        let anim_t = ui.ctx().animate_bool_responsive(response.id, *self.selected);
+        let anim_t = ui
+            .ctx()
+            .animate_bool_responsive(response.id, *self.selected);
 
         if ui.is_rect_visible(rect) {
-            let style = super::radio_style::resolve_radio_style(
-                &theme,
-                *self.selected,
-                response.hovered(),
-            );
+            let mut style =
+                super::radio_style::resolve_radio_style(&theme, *self.selected, response.hovered());
+            if response.is_pointer_button_down_on() {
+                style.circle_border = theme.ring;
+            }
             let painter = ui.painter();
 
             let center = egui::pos2(rect.min.x + outer_radius, rect.center().y);
 
             // Outer circle
-            painter.circle_stroke(center, outer_radius, egui::Stroke::new(1.0, style.circle_border));
+            painter.circle_stroke(
+                center,
+                outer_radius,
+                egui::Stroke::new(1.0, style.circle_border),
+            );
 
             // Inner dot (animated)
             if anim_t > 0.01 {
@@ -68,6 +74,10 @@ impl egui::Widget for super::radio::Radio<'_> {
                     theme.ring,
                 );
             }
+        }
+
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response

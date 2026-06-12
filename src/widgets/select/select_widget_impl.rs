@@ -19,12 +19,29 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         if ui.is_rect_visible(rect) {
             let painter = ui.painter();
             let cr = egui::CornerRadius::same(style.corner_radius.round() as u8);
+            let pressed = response.is_pointer_button_down_on();
+            let trigger_bg = if pressed {
+                crate::paint::interpolate_color::interpolate_color(
+                    style.trigger_bg,
+                    theme.accent,
+                    0.85,
+                )
+            } else if response.hovered() {
+                theme.accent
+            } else {
+                style.trigger_bg
+            };
+            let trigger_border = if response.hovered() || pressed {
+                theme.ring
+            } else {
+                style.trigger_border
+            };
 
-            painter.rect_filled(rect, cr, style.trigger_bg);
+            painter.rect_filled(rect, cr, trigger_bg);
             painter.rect_stroke(
                 rect,
                 cr,
-                egui::Stroke::new(1.0, style.trigger_border),
+                egui::Stroke::new(1.0, trigger_border),
                 egui::epaint::StrokeKind::Inside,
             );
 
@@ -44,11 +61,8 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                 theme.muted_foreground
             };
 
-            let galley = painter.layout_no_wrap(
-                display_text,
-                egui::FontId::proportional(14.0),
-                text_color,
-            );
+            let galley =
+                painter.layout_no_wrap(display_text, egui::FontId::proportional(14.0), text_color);
             let text_pos = egui::pos2(
                 rect.min.x + h_padding,
                 rect.center().y - galley.size().y / 2.0,
@@ -77,6 +91,10 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
             }
         }
 
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+        }
+
         let toggle_cmd = if response.clicked() {
             Some(egui::SetOpenCommand::Toggle)
         } else {
@@ -84,29 +102,26 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         };
 
         let popup_cr = style.corner_radius.round() as u8;
-        let popup = egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            &response,
-            ui.layer_id(),
-        )
-        .open_memory(toggle_cmd)
-        .frame(
-            egui::Frame::NONE
-                .fill(style.popover_bg)
-                .inner_margin(egui::Margin::same(4))
-                .corner_radius(egui::CornerRadius::same(popup_cr))
-                .stroke(egui::Stroke::new(1.0, style.popover_border))
-                .shadow(egui::Shadow {
-                    offset: [0, 4],
-                    blur: 12,
-                    spread: 0,
-                    color: egui::Color32::from_black_alpha(8),
-                }),
-        );
+        let popup = egui::Popup::new(popup_id, ui.ctx().clone(), &response, ui.layer_id())
+            .open_memory(toggle_cmd)
+            .frame(
+                egui::Frame::NONE
+                    .fill(style.popover_bg)
+                    .inner_margin(egui::Margin::same(4))
+                    .corner_radius(egui::CornerRadius::same(popup_cr))
+                    .stroke(egui::Stroke::new(1.0, style.popover_border))
+                    .shadow(egui::Shadow {
+                        offset: [0, 4],
+                        blur: 12,
+                        spread: 0,
+                        color: egui::Color32::from_black_alpha(8),
+                    }),
+            );
 
         popup.show(|ui: &mut egui::Ui| {
-            ui.set_min_width((width - 8.0).max(144.0));
+            let popup_width = width.max(144.0);
+            ui.set_min_width(popup_width);
+            ui.set_max_width(popup_width);
             let check_icon_size: f32 = 12.0;
 
             for option in self.options {
@@ -120,7 +135,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                 );
 
                 let item_height = galley.size().y + 8.0;
-                let item_desired = egui::vec2(ui.available_width(), item_height);
+                let item_desired = egui::vec2(popup_width, item_height);
                 let (item_rect, item_response) =
                     ui.allocate_exact_size(item_desired, egui::Sense::click());
 
@@ -129,7 +144,9 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                         (style.corner_radius - 2.0).max(4.0).round() as u8,
                     );
                     if item_response.hovered() {
-                        ui.painter().rect_filled(item_rect, item_cr, style.item_hover_bg);
+                        ui.painter()
+                            .rect_filled(item_rect, item_cr, style.item_hover_bg);
+                        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
                     }
 
                     let text_x = item_rect.min.x + 6.0;
@@ -191,12 +208,29 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         if ui.is_rect_visible(rect) {
             let painter = ui.painter();
             let cr = egui::CornerRadius::same(style.corner_radius.round() as u8);
+            let pressed = response.is_pointer_button_down_on();
+            let trigger_bg = if pressed {
+                crate::paint::interpolate_color::interpolate_color(
+                    style.trigger_bg,
+                    theme.accent,
+                    0.85,
+                )
+            } else if response.hovered() {
+                theme.accent
+            } else {
+                style.trigger_bg
+            };
+            let trigger_border = if response.hovered() || pressed {
+                theme.ring
+            } else {
+                style.trigger_border
+            };
 
-            painter.rect_filled(rect, cr, style.trigger_bg);
+            painter.rect_filled(rect, cr, trigger_bg);
             painter.rect_stroke(
                 rect,
                 cr,
-                egui::Stroke::new(1.0, style.trigger_border),
+                egui::Stroke::new(1.0, trigger_border),
                 egui::epaint::StrokeKind::Inside,
             );
 
@@ -239,6 +273,10 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
             }
         }
 
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+        }
+
         let toggle_cmd = if response.clicked() {
             Some(egui::SetOpenCommand::Toggle)
         } else {
@@ -246,29 +284,26 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         };
 
         let popup_cr = style.corner_radius.round() as u8;
-        let popup = egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            &response,
-            ui.layer_id(),
-        )
-        .open_memory(toggle_cmd)
-        .frame(
-            egui::Frame::NONE
-                .fill(style.popover_bg)
-                .inner_margin(egui::Margin::same(4))
-                .corner_radius(egui::CornerRadius::same(popup_cr))
-                .stroke(egui::Stroke::new(1.0, style.popover_border))
-                .shadow(egui::Shadow {
-                    offset: [0, 4],
-                    blur: 12,
-                    spread: 0,
-                    color: egui::Color32::from_black_alpha(8),
-                }),
-        );
+        let popup = egui::Popup::new(popup_id, ui.ctx().clone(), &response, ui.layer_id())
+            .open_memory(toggle_cmd)
+            .frame(
+                egui::Frame::NONE
+                    .fill(style.popover_bg)
+                    .inner_margin(egui::Margin::same(4))
+                    .corner_radius(egui::CornerRadius::same(popup_cr))
+                    .stroke(egui::Stroke::new(1.0, style.popover_border))
+                    .shadow(egui::Shadow {
+                        offset: [0, 4],
+                        blur: 12,
+                        spread: 0,
+                        color: egui::Color32::from_black_alpha(8),
+                    }),
+            );
 
         popup.show(|ui: &mut egui::Ui| {
-            ui.set_min_width((width - 8.0).max(144.0));
+            let popup_width = width.max(144.0);
+            ui.set_min_width(popup_width);
+            ui.set_max_width(popup_width);
             let check_icon_size: f32 = 12.0;
 
             for option in self.options {
@@ -282,7 +317,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                 );
 
                 let item_height = galley.size().y + 8.0;
-                let item_desired = egui::vec2(ui.available_width(), item_height);
+                let item_desired = egui::vec2(popup_width, item_height);
                 let (item_rect, item_response) =
                     ui.allocate_exact_size(item_desired, egui::Sense::click());
 
@@ -291,7 +326,9 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                         (style.corner_radius - 2.0).max(4.0).round() as u8,
                     );
                     if item_response.hovered() {
-                        ui.painter().rect_filled(item_rect, item_cr, style.item_hover_bg);
+                        ui.painter()
+                            .rect_filled(item_rect, item_cr, style.item_hover_bg);
+                        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
                     }
 
                     let text_x = item_rect.min.x + 6.0;

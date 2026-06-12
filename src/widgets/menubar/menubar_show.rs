@@ -2,11 +2,7 @@
 
 impl super::menubar::Menubar {
     /// Shows the menu bar. Content closure should add menu items.
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
         let frame = egui::Frame::NONE
@@ -54,7 +50,17 @@ impl super::menubar::Menubar {
 
         if ui.is_rect_visible(rect) {
             let cr = egui::CornerRadius::same(4);
-            if response.hovered() {
+            if response.is_pointer_button_down_on() {
+                ui.painter().rect_filled(
+                    rect,
+                    cr,
+                    crate::paint::interpolate_color::interpolate_color(
+                        theme.accent,
+                        theme.primary,
+                        0.12,
+                    ),
+                );
+            } else if response.hovered() {
                 ui.painter().rect_filled(rect, cr, theme.accent);
             }
 
@@ -65,18 +71,17 @@ impl super::menubar::Menubar {
             ui.painter().galley(text_pos, galley, theme.foreground);
         }
 
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+        }
+
         response
     }
 
     /// Creates a menu bar item with a dropdown submenu.
     /// `items` is a list of submenu item labels.
     /// `on_select` is called with the index of the clicked item.
-    pub fn menu(
-        ui: &mut egui::Ui,
-        label: &str,
-        items: &[&str],
-        on_select: impl FnOnce(usize),
-    ) {
+    pub fn menu(ui: &mut egui::Ui, label: &str, items: &[&str], on_select: impl FnOnce(usize)) {
         let trigger = Self::item(ui, label);
         crate::widgets::dropdown_menu::dropdown_menu::DropdownMenu::show(
             ui, &trigger, items, on_select,

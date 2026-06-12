@@ -61,6 +61,11 @@ impl egui::Widget for super::color_swatch::ColorSwatch {
                 super::paint_checkerboard::paint_checkerboard(painter, swatch_rect, 5.0);
             }
 
+            let swatch_rect = if response.is_pointer_button_down_on() {
+                swatch_rect.shrink(1.0)
+            } else {
+                swatch_rect
+            };
             painter.rect_filled(swatch_rect, radius, self.color);
 
             let border = if response.hovered() || self.selected {
@@ -93,6 +98,10 @@ impl egui::Widget for super::color_swatch::ColorSwatch {
             if let Some(galley) = hex_galley {
                 painter.galley(egui::pos2(text_x, text_y), galley, theme.muted_foreground);
             }
+        }
+
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response

@@ -40,8 +40,28 @@ impl egui::Widget for super::switch::Switch<'_> {
                 egui::vec2(track_w, track_h),
             );
             let track_cr = (track_h / 2.0).round().min(255.0) as u8;
-            painter.rect_filled(track_rect, egui::CornerRadius::same(track_cr), style.track_color);
-            if let Some(border_color) = style.track_border {
+            let track_color = if response.is_pointer_button_down_on() {
+                crate::paint::interpolate_color::interpolate_color(
+                    style.track_color,
+                    theme.accent,
+                    0.45,
+                )
+            } else if response.hovered() {
+                crate::paint::interpolate_color::interpolate_color(
+                    style.track_color,
+                    theme.accent,
+                    0.25,
+                )
+            } else {
+                style.track_color
+            };
+            painter.rect_filled(track_rect, egui::CornerRadius::same(track_cr), track_color);
+            let track_border = if response.hovered() || response.is_pointer_button_down_on() {
+                Some(theme.ring)
+            } else {
+                style.track_border
+            };
+            if let Some(border_color) = track_border {
                 painter.rect_stroke(
                     track_rect,
                     egui::CornerRadius::same(track_cr),
@@ -54,10 +74,7 @@ impl egui::Widget for super::switch::Switch<'_> {
             let thumb_min_x = track_rect.min.x + thumb_margin;
             let thumb_max_x = track_rect.max.x - thumb_margin - thumb_size;
             let thumb_x = thumb_min_x + (thumb_max_x - thumb_min_x) * anim_t;
-            let thumb_center = egui::pos2(
-                thumb_x + thumb_size / 2.0,
-                track_rect.center().y,
-            );
+            let thumb_center = egui::pos2(thumb_x + thumb_size / 2.0, track_rect.center().y);
             painter.circle_filled(thumb_center, thumb_size / 2.0, style.thumb_color);
 
             // Label
@@ -78,6 +95,10 @@ impl egui::Widget for super::switch::Switch<'_> {
                     theme.ring,
                 );
             }
+        }
+
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response

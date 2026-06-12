@@ -15,14 +15,27 @@ impl super::input_group::InputGroup {
 
         let width = ui.available_width().min(300.0);
         let desired = egui::vec2(width, height);
-        let (outer_rect, _) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let (outer_rect, outer_response) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let outer_hovered = outer_response.hovered() || ui.rect_contains_pointer(outer_rect);
 
         // Outer border
-        ui.painter().rect_filled(outer_rect, cr, theme.background);
+        let bg = if outer_hovered {
+            crate::paint::interpolate_color::interpolate_color(theme.background, theme.accent, 0.35)
+        } else {
+            theme.background
+        };
+        ui.painter().rect_filled(outer_rect, cr, bg);
         ui.painter().rect_stroke(
             outer_rect,
             cr,
-            egui::Stroke::new(1.0, theme.border),
+            egui::Stroke::new(
+                1.0,
+                if outer_hovered {
+                    theme.input
+                } else {
+                    theme.border
+                },
+            ),
             egui::epaint::StrokeKind::Inside,
         );
 
@@ -41,7 +54,8 @@ impl super::input_group::InputGroup {
                 cursor_x + h_padding,
                 outer_rect.center().y - galley.size().y / 2.0,
             );
-            ui.painter().galley(text_pos, galley, theme.muted_foreground);
+            ui.painter()
+                .galley(text_pos, galley, theme.muted_foreground);
 
             // Divider line
             cursor_x += prefix_w + h_padding;
@@ -87,11 +101,9 @@ impl super::input_group::InputGroup {
                 outer_rect.y_range(),
                 egui::Stroke::new(1.0, theme.border),
             );
-            let mut suffix_ui = ui.new_child(
-                egui::UiBuilder::new()
-                    .max_rect(suffix_rect)
-                    .layout(egui::Layout::centered_and_justified(egui::Direction::LeftToRight)),
-            );
+            let mut suffix_ui = ui.new_child(egui::UiBuilder::new().max_rect(suffix_rect).layout(
+                egui::Layout::centered_and_justified(egui::Direction::LeftToRight),
+            ));
             suffix_fn(&mut suffix_ui);
         }
 

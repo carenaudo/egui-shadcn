@@ -25,8 +25,7 @@ impl super::tabs::Tabs {
                         ui.spacing_mut().item_spacing.x = 2.0;
                         for (idx, label) in self.labels.iter().enumerate() {
                             let is_active = idx == *selected;
-                            let response =
-                                Self::render_tab(ui, &theme, label, is_active, cr);
+                            let response = Self::render_tab(ui, &theme, label, is_active, cr);
                             if response.clicked() {
                                 *selected = idx;
                                 ui.ctx().request_repaint();
@@ -71,6 +70,15 @@ impl super::tabs::Tabs {
 
             let (bg, fg) = if is_active {
                 (theme.background, theme.foreground)
+            } else if response.is_pointer_button_down_on() {
+                (
+                    crate::paint::interpolate_color::interpolate_color(
+                        theme.background,
+                        theme.accent,
+                        0.65,
+                    ),
+                    theme.foreground,
+                )
             } else if response.hovered() {
                 (
                     egui::Color32::from_rgba_unmultiplied(
@@ -109,6 +117,10 @@ impl super::tabs::Tabs {
                 rect.center().y - galley.size().y / 2.0,
             );
             painter.galley(text_pos, galley, fg);
+        }
+
+        if response.hovered() && !is_active {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response
@@ -177,6 +189,15 @@ impl super::tabs::IconTabs {
 
             let (bg, fg) = if is_active {
                 (theme.background, theme.foreground)
+            } else if response.is_pointer_button_down_on() {
+                (
+                    crate::paint::interpolate_color::interpolate_color(
+                        theme.background,
+                        theme.accent,
+                        0.65,
+                    ),
+                    theme.foreground,
+                )
             } else if response.hovered() {
                 (
                     egui::Color32::from_rgba_unmultiplied(
@@ -212,11 +233,8 @@ impl super::tabs::IconTabs {
 
             match entry {
                 super::tabs::TabEntry::Text(label) => {
-                    let galley = painter.layout_no_wrap(
-                        label.clone(),
-                        egui::FontId::proportional(12.0),
-                        fg,
-                    );
+                    let galley =
+                        painter.layout_no_wrap(label.clone(), egui::FontId::proportional(12.0), fg);
                     let text_pos = egui::pos2(
                         rect.center().x - galley.size().x / 2.0,
                         rect.center().y - galley.size().y / 2.0,
@@ -231,6 +249,10 @@ impl super::tabs::IconTabs {
                     crate::icons::paint_icon::paint_icon(painter, icon_rect, icon, fg);
                 }
             }
+        }
+
+        if response.hovered() && !is_active {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         // Show tooltip for icon entries

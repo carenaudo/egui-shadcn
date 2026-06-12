@@ -1516,7 +1516,7 @@ impl DashboardApp {
 
                 egui_shadcn::PropertyRow::new("Blend").show(ui, |ui| {
                     egui_shadcn::SelectValue::new(&mut self.prop_blend_mode, &blend_modes)
-                        .width(140.0)
+                        .width(112.0)
                         .show(ui);
                 });
 

@@ -92,14 +92,19 @@ impl super::pagination::Pagination {
         let size: f32 = 32.0;
         let icon_size: f32 = 14.0;
 
-        let (rect, response) =
-            ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::click());
+        let (rect, response) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::click());
 
         if ui.is_rect_visible(rect) {
             let painter = ui.painter();
             let cr = egui::CornerRadius::same(theme.radius.round() as u8);
 
-            let bg = if response.hovered() && enabled {
+            let bg = if response.is_pointer_button_down_on() && enabled {
+                crate::paint::interpolate_color::interpolate_color(
+                    theme.accent,
+                    theme.primary,
+                    0.12,
+                )
+            } else if response.hovered() && enabled {
                 theme.accent
             } else {
                 egui::Color32::TRANSPARENT
@@ -119,11 +124,13 @@ impl super::pagination::Pagination {
                 theme.muted_foreground
             };
 
-            let icon_rect = egui::Rect::from_center_size(
-                rect.center(),
-                egui::vec2(icon_size, icon_size),
-            );
+            let icon_rect =
+                egui::Rect::from_center_size(rect.center(), egui::vec2(icon_size, icon_size));
             crate::icons::paint_icon::paint_icon(painter, icon_rect, icon, fg);
+        }
+
+        if response.hovered() && enabled {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response
@@ -138,10 +145,8 @@ impl super::pagination::Pagination {
         let icon_size: f32 = 14.0;
         let (rect, _) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::hover());
         if ui.is_rect_visible(rect) {
-            let icon_rect = egui::Rect::from_center_size(
-                rect.center(),
-                egui::vec2(icon_size, icon_size),
-            );
+            let icon_rect =
+                egui::Rect::from_center_size(rect.center(), egui::vec2(icon_size, icon_size));
             crate::icons::paint_icon::paint_icon(
                 ui.painter(),
                 icon_rect,
@@ -176,8 +181,7 @@ impl super::pagination::Pagination {
             fg,
         );
 
-        let (rect, response) =
-            ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::click());
+        let (rect, response) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::click());
 
         if ui.is_rect_visible(rect) {
             let painter = ui.painter();
@@ -185,6 +189,12 @@ impl super::pagination::Pagination {
 
             let bg = if is_active {
                 theme.primary
+            } else if response.is_pointer_button_down_on() && enabled {
+                crate::paint::interpolate_color::interpolate_color(
+                    theme.accent,
+                    theme.primary,
+                    0.12,
+                )
             } else if response.hovered() && enabled {
                 theme.accent
             } else {
@@ -207,6 +217,10 @@ impl super::pagination::Pagination {
                 rect.center().y - galley.size().y / 2.0,
             );
             painter.galley(text_pos, galley, fg);
+        }
+
+        if response.hovered() && enabled && !is_active {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response

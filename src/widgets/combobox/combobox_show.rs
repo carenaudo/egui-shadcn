@@ -35,7 +35,13 @@ impl super::combobox::Combobox {
 
         if ui.is_rect_visible(trigger_rect) {
             let cr = egui::CornerRadius::same(theme.radius.round() as u8);
-            let bg = if trigger.hovered() {
+            let bg = if trigger.is_pointer_button_down_on() {
+                crate::paint::interpolate_color::interpolate_color(
+                    theme.background,
+                    theme.accent,
+                    0.85,
+                )
+            } else if trigger.hovered() {
                 theme.accent
             } else {
                 theme.background
@@ -67,6 +73,10 @@ impl super::combobox::Combobox {
                 &crate::icons::lucide_icon::LucideIcon::ChevronDown,
                 theme.muted_foreground,
             );
+        }
+
+        if trigger.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         let popup_id = trigger.id.with("combobox_popup");
@@ -148,6 +158,10 @@ impl super::combobox::Combobox {
                     if r.hovered() || is_selected {
                         ui.painter()
                             .rect_filled(rect, egui::CornerRadius::same(4), theme.accent);
+                    }
+
+                    if r.hovered() {
+                        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
                     }
 
                     if ui.is_rect_visible(rect) {

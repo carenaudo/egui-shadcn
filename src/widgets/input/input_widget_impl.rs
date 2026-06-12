@@ -4,23 +4,34 @@ impl egui::Widget for super::input::Input<'_> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
-        let height: f32 = 32.0;    // h-8
-        let h_padding: f32 = 10.0;  // px-2.5
-        let v_padding: f32 = 4.0;   // py-1
+        let height: f32 = 32.0; // h-8
+        let h_padding: f32 = 10.0; // px-2.5
+        let v_padding: f32 = 4.0; // py-1
         let width = self.desired_width.unwrap_or(ui.available_width());
 
         let style = super::input_style::resolve_input_style(&theme, false);
         let cr = egui::CornerRadius::same(style.corner_radius.round() as u8);
 
         let desired = egui::vec2(width, height);
-        let (outer_rect, _outer_response) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let (outer_rect, outer_response) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let outer_hovered = outer_response.hovered() || ui.rect_contains_pointer(outer_rect);
+        let bg = if outer_hovered {
+            crate::paint::interpolate_color::interpolate_color(style.bg, theme.accent, 0.35)
+        } else {
+            style.bg
+        };
+        let border_color = if outer_hovered {
+            theme.input
+        } else {
+            style.border_color
+        };
 
         // Paint background and border
-        ui.painter().rect_filled(outer_rect, cr, style.bg);
+        ui.painter().rect_filled(outer_rect, cr, bg);
         ui.painter().rect_stroke(
             outer_rect,
             cr,
-            egui::Stroke::new(1.0, style.border_color),
+            egui::Stroke::new(1.0, border_color),
             egui::epaint::StrokeKind::Inside,
         );
 

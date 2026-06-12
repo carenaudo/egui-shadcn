@@ -18,11 +18,20 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
 
         let width = self.width.unwrap_or(60.0);
         let desired = egui::vec2(width, height);
-        let (outer_rect, _) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let (outer_rect, outer_response) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let outer_hovered = outer_response.hovered() || ui.rect_contains_pointer(outer_rect);
+        let outer_pressed = outer_hovered && ui.input(|input| input.pointer.primary_down());
 
         // Paint background only — border is drawn after DragValue so we
         // can choose between the regular border and the focus ring.
-        ui.painter().rect_filled(outer_rect, cr, theme.muted);
+        let bg = if outer_pressed {
+            crate::paint::interpolate_color::interpolate_color(theme.muted, theme.accent, 0.5)
+        } else if outer_hovered {
+            crate::paint::interpolate_color::interpolate_color(theme.muted, theme.accent, 0.35)
+        } else {
+            theme.muted
+        };
+        ui.painter().rect_filled(outer_rect, cr, bg);
 
         // Inner region with padding
         let inner_rect = egui::Rect::from_min_max(
@@ -30,27 +39,33 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
             egui::pos2(outer_rect.max.x - h_padding, outer_rect.max.y),
         );
 
-        let mut child_ui = ui.new_child(
-            egui::UiBuilder::new()
-                .max_rect(inner_rect)
-                .layout(egui::Layout::left_to_right(egui::Align::Center)),
-        );
+        let mut value_min_x = inner_rect.min.x;
 
-        // Paint prefix text
+        // Paint prefix text in a dedicated leading slot so it cannot overlap
+        // the DragValue edit field when the control is compact.
         if let Some(ref prefix) = self.prefix {
-            let galley = child_ui.painter().layout_no_wrap(
+            let galley = ui.painter().layout_no_wrap(
                 prefix.clone(),
                 egui::FontId::proportional(11.0),
                 theme.muted_foreground,
             );
-            let prefix_rect = child_ui
-                .allocate_exact_size(galley.size(), egui::Sense::hover())
-                .0;
-            child_ui
-                .painter()
-                .galley(prefix_rect.min, galley, theme.muted_foreground);
-            child_ui.add_space(2.0);
+            let text_pos = egui::pos2(
+                inner_rect.min.x,
+                inner_rect.center().y - galley.size().y / 2.0,
+            );
+            value_min_x += galley.size().x + 5.0;
+            ui.painter()
+                .galley(text_pos, galley, theme.muted_foreground);
         }
+
+        let value_rect =
+            egui::Rect::from_min_max(egui::pos2(value_min_x, inner_rect.min.y), inner_rect.max);
+
+        let mut child_ui = ui.new_child(
+            egui::UiBuilder::new()
+                .max_rect(value_rect)
+                .layout(egui::Layout::left_to_right(egui::Align::Center)),
+        );
 
         // Build DragValue
         let mut dv = egui::DragValue::new(&mut proxy)
@@ -95,7 +110,7 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
         // Keep text selection highlight visible.
         child_ui.style_mut().visuals.selection.bg_fill = theme.primary;
 
-        let response = child_ui.add(dv);
+        let response = child_ui.add_sized(value_rect.size(), dv);
 
         // Write back
         match self.value {
@@ -105,7 +120,22 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
         }
 
         // Single border: focus ring when focused, regular border otherwise.
+        if response.hovered() || response.dragged() {
+            ui.ctx().set_cursor_icon(if response.dragged() {
+                egui::CursorIcon::Grabbing
+            } else {
+                egui::CursorIcon::ResizeHorizontal
+            });
+        }
+
         if response.has_focus() || response.dragged() {
+            ui.painter().rect_stroke(
+                outer_rect,
+                cr,
+                egui::Stroke::new(1.0, theme.ring),
+                egui::epaint::StrokeKind::Inside,
+            );
+        } else if outer_hovered {
             ui.painter().rect_stroke(
                 outer_rect,
                 cr,

@@ -5,25 +5,35 @@ impl egui::Widget for super::textarea::Textarea<'_> {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
         let h_padding: f32 = 10.0; // px-2.5
-        let v_padding: f32 = 8.0;  // py-2
-        let width = self.desired_width.unwrap_or(ui.available_width().min(240.0));
+        let v_padding: f32 = 8.0; // py-2
+        let width = self
+            .desired_width
+            .unwrap_or(ui.available_width().min(240.0));
         let corner_radius = theme.radius;
         let cr = egui::CornerRadius::same(corner_radius.round() as u8);
 
         let desired = egui::vec2(width, self.min_height);
-        let (outer_rect, _) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let (outer_rect, outer_response) = ui.allocate_exact_size(desired, egui::Sense::hover());
+        let outer_hovered = outer_response.hovered() || ui.rect_contains_pointer(outer_rect);
 
         // Background and border
-        let bg = crate::paint::interpolate_color::interpolate_color(
-            theme.background,
-            theme.muted,
-            0.4,
-        );
+        let mut bg =
+            crate::paint::interpolate_color::interpolate_color(theme.background, theme.muted, 0.4);
+        if outer_hovered {
+            bg = crate::paint::interpolate_color::interpolate_color(bg, theme.accent, 0.35);
+        }
         ui.painter().rect_filled(outer_rect, cr, bg);
         ui.painter().rect_stroke(
             outer_rect,
             cr,
-            egui::Stroke::new(1.0, theme.border),
+            egui::Stroke::new(
+                1.0,
+                if outer_hovered {
+                    theme.input
+                } else {
+                    theme.border
+                },
+            ),
             egui::epaint::StrokeKind::Inside,
         );
 

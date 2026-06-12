@@ -16,11 +16,8 @@ impl egui::Widget for super::checkbox::Checkbox<'_> {
             .cloned()
             .unwrap_or_else(|| egui::FontId::proportional(14.0));
         let label_galley = self.label.map(|l| {
-            ui.painter().layout_no_wrap(
-                l.text().to_owned(),
-                label_font,
-                theme.foreground,
-            )
+            ui.painter()
+                .layout_no_wrap(l.text().to_owned(), label_font, theme.foreground)
         });
 
         let label_width = label_galley.as_ref().map_or(0.0, |g| g.size().x + spacing);
@@ -38,12 +35,18 @@ impl egui::Widget for super::checkbox::Checkbox<'_> {
         let anim_t = ui.ctx().animate_bool_responsive(response.id, *self.checked);
 
         if ui.is_rect_visible(rect) {
-            let style = super::checkbox_style::resolve_checkbox_style(
+            let mut style = super::checkbox_style::resolve_checkbox_style(
                 &theme,
                 *self.checked,
                 response.hovered(),
                 !ui.is_enabled(),
             );
+            if response.is_pointer_button_down_on() {
+                style.box_border = theme.ring;
+                if !*self.checked {
+                    style.box_bg = theme.accent;
+                }
+            }
 
             let painter = ui.painter();
             let box_rect = egui::Rect::from_min_size(
@@ -61,12 +64,7 @@ impl egui::Widget for super::checkbox::Checkbox<'_> {
             );
 
             // Checkmark
-            super::paint_check_icon::paint_check_icon(
-                painter,
-                box_rect,
-                style.check_color,
-                anim_t,
-            );
+            super::paint_check_icon::paint_check_icon(painter, box_rect, style.check_color, anim_t);
 
             // Label
             if let Some(galley) = label_galley {
@@ -86,6 +84,10 @@ impl egui::Widget for super::checkbox::Checkbox<'_> {
                     theme.ring,
                 );
             }
+        }
+
+        if response.hovered() {
+            ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
         }
 
         response
