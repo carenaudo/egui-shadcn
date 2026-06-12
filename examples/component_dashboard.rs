@@ -5,13 +5,14 @@
 // ---------------------------------------------------------------------------
 
 const CATEGORIES: &[(&str, &[&str])] = &[
-    ("Layout", &["Flex"]),
+    ("Layout", &["Flex", "Toolbar", "StatusBar"]),
     (
         "Typography & Display",
         &[
             "Typography",
             "Icons",
             "Badge",
+            "ColorSwatch",
             "Kbd",
             "Separator",
             "Avatar",
@@ -45,6 +46,7 @@ const CATEGORIES: &[(&str, &[&str])] = &[
         "Containers",
         &[
             "Card",
+            "PropertyGrid",
             "Alert",
             "Accordion",
             "Collapsible",
@@ -173,6 +175,16 @@ struct DashboardApp {
     flex_last_name: String,
     flex_email: String,
     flex_phone: String,
+    toolbar_tool_idx: usize,
+    toolbar_snap: bool,
+    color_swatch_idx: usize,
+    prop_x: f64,
+    prop_y: f64,
+    prop_width: f64,
+    prop_height: f64,
+    prop_rotation: f64,
+    prop_opacity: f64,
+    prop_blend_mode: String,
 }
 
 impl Default for DashboardApp {
@@ -228,6 +240,16 @@ impl Default for DashboardApp {
             flex_last_name: String::new(),
             flex_email: String::new(),
             flex_phone: String::new(),
+            toolbar_tool_idx: 1,
+            toolbar_snap: true,
+            color_swatch_idx: 0,
+            prop_x: 124.0,
+            prop_y: 88.0,
+            prop_width: 320.0,
+            prop_height: 180.0,
+            prop_rotation: -8.0,
+            prop_opacity: 92.0,
+            prop_blend_mode: "Normal".to_owned(),
         }
     }
 }
@@ -445,9 +467,12 @@ impl DashboardApp {
 
         match name {
             "Flex" => self.demo_flex(ui),
+            "Toolbar" => self.demo_toolbar(ui),
+            "StatusBar" => self.demo_status_bar(ui),
             "Typography" => self.demo_typography(ui),
             "Icons" => self.demo_icons(ui, theme),
             "Badge" => self.demo_badge(ui),
+            "ColorSwatch" => self.demo_color_swatch(ui),
             "Kbd" => self.demo_kbd(ui),
             "Separator" => self.demo_separator(ui),
             "Avatar" => self.demo_avatar(ui),
@@ -471,6 +496,7 @@ impl DashboardApp {
             "Combobox" => self.demo_combobox(ui),
             "InputOtp" => self.demo_input_otp(ui),
             "Card" => self.demo_card(ui),
+            "PropertyGrid" => self.demo_property_grid(ui),
             "Alert" => self.demo_alert(ui),
             "Accordion" => self.demo_accordion(ui),
             "Collapsible" => self.demo_collapsible(ui),
@@ -649,6 +675,108 @@ impl DashboardApp {
         });
     }
 
+    fn demo_toolbar(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Compact command container for editor and app controls.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        let tools = [
+            egui_shadcn::LucideIcon::MousePointer2,
+            egui_shadcn::LucideIcon::PenTool,
+            egui_shadcn::LucideIcon::Spline,
+            egui_shadcn::LucideIcon::Frame,
+            egui_shadcn::LucideIcon::Type,
+        ];
+
+        egui_shadcn::Toolbar::new().show(ui, |ui| {
+            egui_shadcn::ButtonGroup::show(ui, |ui| {
+                for (idx, icon) in tools.iter().enumerate() {
+                    let response = egui_shadcn::Button::icon_only(*icon)
+                        .variant(egui_shadcn::ButtonVariant::Ghost)
+                        .selected(self.toolbar_tool_idx == idx)
+                        .show(ui);
+                    if response.clicked() {
+                        self.toolbar_tool_idx = idx;
+                    }
+                }
+            });
+
+            egui_shadcn::Separator::vertical().show(ui);
+
+            egui_shadcn::ButtonGroup::show(ui, |ui| {
+                egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Undo2)
+                    .variant(egui_shadcn::ButtonVariant::Ghost)
+                    .show(ui);
+                egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Redo2)
+                    .variant(egui_shadcn::ButtonVariant::Ghost)
+                    .show(ui);
+            });
+
+            egui_shadcn::Separator::vertical().show(ui);
+
+            if egui_shadcn::Button::new("Snap")
+                .variant(egui_shadcn::ButtonVariant::Outline)
+                .selected(self.toolbar_snap)
+                .shortcut_text("S")
+                .show(ui)
+                .clicked()
+            {
+                self.toolbar_snap = !self.toolbar_snap;
+            }
+
+            egui_shadcn::Button::new("Preview")
+                .icon(egui_shadcn::LucideIcon::Play)
+                .show(ui);
+        });
+
+        ui.add_space(14.0);
+        egui_shadcn::Typography::small("Dense toolbar").show(ui);
+        ui.add_space(4.0);
+        egui_shadcn::Toolbar::new().dense().wrap(false).show(ui, |ui| {
+            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomOut)
+                .variant(egui_shadcn::ButtonVariant::Ghost)
+                .size(egui_shadcn::ComponentSize::Sm)
+                .show(ui);
+            egui_shadcn::Badge::new("100%")
+                .variant(egui_shadcn::BadgeVariant::Secondary)
+                .show(ui);
+            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomIn)
+                .variant(egui_shadcn::ButtonVariant::Ghost)
+                .size(egui_shadcn::ComponentSize::Sm)
+                .show(ui);
+        });
+    }
+
+    fn demo_status_bar(&self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Compact container for workspace state and metadata.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        egui_shadcn::StatusBar::new().show(ui, |ui| {
+            egui_shadcn::Badge::new("Saved")
+                .variant(egui_shadcn::BadgeVariant::Secondary)
+                .show(ui);
+            egui_shadcn::Separator::vertical().show(ui);
+            egui_shadcn::Typography::small("Canvas 1920 x 1080").show(ui);
+            egui_shadcn::Separator::vertical().show(ui);
+            egui_shadcn::Typography::small("2 objects selected").show(ui);
+            egui_shadcn::Separator::vertical().show(ui);
+            egui_shadcn::Kbd::new("Cmd").show(ui);
+            ui.label("+");
+            egui_shadcn::Kbd::new("S").show(ui);
+        });
+
+        ui.add_space(12.0);
+        egui_shadcn::StatusBar::new().dense().show(ui, |ui| {
+            egui_shadcn::Typography::small("x: 124").show(ui);
+            egui_shadcn::Typography::small("y: 88").show(ui);
+            egui_shadcn::Typography::small("rotation: -8deg").show(ui);
+            egui_shadcn::Badge::new("Snapping")
+                .variant(egui_shadcn::BadgeVariant::Outline)
+                .show(ui);
+        });
+    }
+
     // ── Typography & Display ──────────────────────────────────────────
 
     fn demo_typography(&self, ui: &mut egui::Ui) {
@@ -780,6 +908,53 @@ impl DashboardApp {
                 .show(ui);
             egui_shadcn::Badge::new("Destructive")
                 .variant(egui_shadcn::BadgeVariant::Destructive)
+                .show(ui);
+        });
+    }
+
+    fn demo_color_swatch(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Clickable color swatches for palettes and style controls.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        let palette = [
+            ("Signal", egui::Color32::from_rgb(25, 113, 194)),
+            ("Mint", egui::Color32::from_rgb(18, 184, 134)),
+            ("Amber", egui::Color32::from_rgb(245, 159, 0)),
+            ("Rose", egui::Color32::from_rgb(224, 49, 49)),
+            ("Ink", egui::Color32::from_rgb(33, 37, 41)),
+        ];
+
+        egui_shadcn::Typography::small("Palette").show(ui);
+        ui.add_space(6.0);
+        ui.horizontal_wrapped(|ui| {
+            for (idx, (label, color)) in palette.iter().enumerate() {
+                let response = egui_shadcn::ColorSwatch::new(*color)
+                    .label(*label)
+                    .selected(self.color_swatch_idx == idx)
+                    .show_hex()
+                    .show(ui);
+                if response.clicked() {
+                    self.color_swatch_idx = idx;
+                }
+                ui.add_space(6.0);
+            }
+        });
+
+        ui.add_space(16.0);
+        egui_shadcn::Typography::small("Compact states").show(ui);
+        ui.add_space(6.0);
+        ui.horizontal(|ui| {
+            egui_shadcn::ColorSwatch::new(egui::Color32::from_rgb(25, 113, 194))
+                .selected(true)
+                .show(ui);
+            egui_shadcn::ColorSwatch::new(egui::Color32::from_rgba_unmultiplied(
+                25, 113, 194, 120,
+            ))
+            .show(ui);
+            egui_shadcn::ColorSwatch::new(egui::Color32::TRANSPARENT)
+                .label("Transparent")
+                .show_hex()
                 .show(ui);
         });
     }
@@ -1247,6 +1422,77 @@ impl DashboardApp {
                 .size(egui_shadcn::ComponentSize::Sm)
                 .show(ui);
         });
+    }
+
+    fn demo_property_grid(&mut self, ui: &mut egui::Ui) {
+        egui_shadcn::Typography::muted("Inspector-style rows for labels and editable controls.")
+            .show(ui);
+        ui.add_space(12.0);
+
+        let blend_modes = vec![
+            "Normal".to_owned(),
+            "Multiply".to_owned(),
+            "Screen".to_owned(),
+            "Overlay".to_owned(),
+        ];
+
+        ui.set_max_width(460.0);
+        egui_shadcn::PropertyGrid::new()
+            .label_width(92.0)
+            .show(ui, |ui| {
+                egui_shadcn::PropertyRow::new("Position").show(ui, |ui| {
+                    egui_shadcn::NumberInput::new(&mut self.prop_x)
+                        .suffix("px")
+                        .width(76.0)
+                        .show(ui);
+                    egui_shadcn::NumberInput::new(&mut self.prop_y)
+                        .suffix("px")
+                        .width(76.0)
+                        .show(ui);
+                });
+
+                egui_shadcn::PropertyRow::new("Size").show(ui, |ui| {
+                    egui_shadcn::NumberInput::new(&mut self.prop_width)
+                        .range(1.0..=4096.0)
+                        .suffix("w")
+                        .width(76.0)
+                        .show(ui);
+                    egui_shadcn::NumberInput::new(&mut self.prop_height)
+                        .range(1.0..=4096.0)
+                        .suffix("h")
+                        .width(76.0)
+                        .show(ui);
+                });
+
+                egui_shadcn::PropertyRow::new("Rotation").show(ui, |ui| {
+                    egui_shadcn::Slider::new(&mut self.prop_rotation, -180.0..=180.0)
+                        .step(1.0)
+                        .width(180.0)
+                        .suffix("deg")
+                        .show(ui);
+                });
+
+                egui_shadcn::PropertyRow::new("Opacity").show(ui, |ui| {
+                    egui_shadcn::Slider::new(&mut self.prop_opacity, 0.0..=100.0)
+                        .step(1.0)
+                        .width(180.0)
+                        .suffix("%")
+                        .show(ui);
+                });
+
+                egui_shadcn::PropertyRow::new("Blend").show(ui, |ui| {
+                    egui_shadcn::SelectValue::new(&mut self.prop_blend_mode, &blend_modes)
+                        .width(140.0)
+                        .show(ui);
+                });
+
+                egui_shadcn::PropertyRow::new("Fill").show(ui, |ui| {
+                    egui_shadcn::ColorSwatch::new(egui::Color32::from_rgb(25, 113, 194))
+                        .label("Primary")
+                        .show_hex()
+                        .show(ui);
+                });
+            });
     }
 
     fn demo_alert(&self, ui: &mut egui::Ui) {

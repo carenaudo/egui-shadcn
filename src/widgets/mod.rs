@@ -57,3 +57,7 @@ pub mod carousel;
 pub mod sidebar;
 pub mod area_chart;
 pub mod number_input;
+pub mod color_swatch;
+pub mod toolbar;
+pub mod property_grid;
+pub mod status_bar;

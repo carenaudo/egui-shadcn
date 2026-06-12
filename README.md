@@ -2,7 +2,7 @@
 
 [shadcn/ui](https://ui.shadcn.com)-inspired widget library for [egui](https://github.com/emilk/egui).
 
-55+ beautifully styled, ready-to-use components with built-in light and dark theming. Drop-in replacements for native egui widgets plus higher-level components like dialogs, date pickers, sidebars, and more.
+60+ beautifully styled, ready-to-use components with built-in light and dark theming. Drop-in replacements for native egui widgets plus higher-level components like dialogs, date pickers, sidebars, and editor-ready controls.
 
 **[Live Demo](https://pjankiewicz.github.io/egui-shadcn/)** (runs in your browser via WebAssembly)
 
@@ -30,13 +30,13 @@ ui.add(egui_shadcn::Select::new(&mut selected, &options).placeholder("Pick one..
 
 | Category | Widgets |
 |----------|---------|
-| **Inputs** | Button, Checkbox, Input, InputOtp, Radio, RadioGroup, Select, Slider, Switch, Textarea, Toggle, ToggleGroup, Combobox, DatePicker |
-| **Layout** | Accordion, AspectRatio, Card, Collapsible, Resizable, ScrollArea, Separator, Tabs, Flex |
+| **Inputs** | Button, Checkbox, ColorSwatch, Input, InputOtp, Radio, RadioGroup, Select, Slider, Switch, Textarea, Toggle, ToggleGroup, Combobox, DatePicker |
+| **Layout** | Accordion, AspectRatio, Card, Collapsible, Resizable, ScrollArea, Separator, StatusBar, Tabs, Toolbar, Flex |
 | **Overlay** | AlertDialog, Command, ContextMenu, Dialog, Drawer, DropdownMenu, HoverCard, Menubar, NavigationMenu, Popover, Sheet, Tooltip |
 | **Feedback** | Alert, Badge, Progress, Skeleton, Spinner, Toast |
 | **Data** | Avatar, Breadcrumb, Calendar, Carousel, Pagination, Sidebar, Table |
 | **Typography** | Typography, Label, Kbd |
-| **Grouping** | ButtonGroup, InputGroup, FieldGroup, FieldSet, FieldLegend, FieldDescription |
+| **Grouping** | ButtonGroup, InputGroup, FieldGroup, FieldSet, FieldLegend, FieldDescription, PropertyGrid, PropertyRow |
 | **Icons** | 1600+ Lucide icons via `LucideIcon` |
 
 ## Theming

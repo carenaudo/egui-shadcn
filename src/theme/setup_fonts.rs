@@ -5,6 +5,10 @@
 /// Call this once during app setup, e.g. in the `CreationContext` callback:
 ///
 /// ```no_run
+/// # struct MyApp;
+/// # impl eframe::App for MyApp {
+/// #     fn update(&mut self, _: &egui::Context, _: &mut eframe::Frame) {}
+/// # }
 /// eframe::run_native("app", Default::default(), Box::new(|cc| {
 ///     egui_shadcn::setup_fonts(&cc.egui_ctx);
 ///     Ok(Box::new(MyApp))

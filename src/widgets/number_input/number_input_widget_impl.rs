@@ -43,12 +43,12 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
                 egui::FontId::proportional(11.0),
                 theme.muted_foreground,
             );
-            let prefix_rect = child_ui.allocate_exact_size(galley.size(), egui::Sense::hover()).0;
-            child_ui.painter().galley(
-                prefix_rect.min,
-                galley,
-                theme.muted_foreground,
-            );
+            let prefix_rect = child_ui
+                .allocate_exact_size(galley.size(), egui::Sense::hover())
+                .0;
+            child_ui
+                .painter()
+                .galley(prefix_rect.min, galley, theme.muted_foreground);
             child_ui.add_space(2.0);
         }
 
@@ -91,6 +91,7 @@ impl egui::Widget for super::number_input::NumberInput<'_> {
         // Prevent the TextEdit (when DragValue enters editing mode) from
         // drawing its own dark background — it uses extreme_bg_color.
         child_ui.style_mut().visuals.extreme_bg_color = egui::Color32::TRANSPARENT;
+        child_ui.style_mut().visuals.override_text_color = Some(theme.foreground);
         // Keep text selection highlight visible.
         child_ui.style_mut().visuals.selection.bg_fill = theme.primary;
 
