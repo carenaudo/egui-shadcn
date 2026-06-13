@@ -10,7 +10,21 @@ pub fn paint_icon(
     icon: &super::lucide_icon::LucideIcon,
     color: egui::Color32,
 ) {
-    let elements = super::parse_svg::parse_svg(icon.svg_data());
+    paint_icon_svg(painter, rect, icon.svg_data(), color);
+}
+
+/// Paint a raw Lucide-style SVG body (the inner `<path>`/`<circle>`/… elements,
+/// 24×24 viewBox, no `<svg>` wrapper) into `rect` with the given `color`.
+///
+/// Use this for custom icons authored in the Lucide grammar that are not part of
+/// the [`LucideIcon`](super::lucide_icon::LucideIcon) set.
+pub fn paint_icon_svg(
+    painter: &egui::Painter,
+    rect: egui::Rect,
+    svg_body: &str,
+    color: egui::Color32,
+) {
+    let elements = super::parse_svg::parse_svg(svg_body);
     let scale = rect.width().min(rect.height()) / 24.0;
     let offset = rect.min;
     let stroke = egui::Stroke::new(2.0 * scale, color);

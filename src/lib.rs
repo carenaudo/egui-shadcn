@@ -93,6 +93,7 @@ pub use widgets::tooltip::tooltip::Tooltip;
 pub use widgets::typography::typography::Typography;
 pub use icons::lucide_icon::LucideIcon;
 pub use icons::paint_icon::paint_icon;
+pub use icons::paint_icon::paint_icon_svg;
 pub use theme::setup_fonts::setup_fonts;
 pub use layout::flex::Flex;
 pub use layout::flex_instance::FlexInst;
