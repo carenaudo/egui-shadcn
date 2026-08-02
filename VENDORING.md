@@ -59,6 +59,46 @@ already went through:
 widgets — `Dialog`, `AlertDialog`, `Sheet`, `Drawer`, `Command`, `Toast` — are still
 `Context`-driven and unaffected by the panel change.
 
+## Bugs fixed here, worth sending upstream
+
+Neither is a 0.35-porting artifact; both are present in `upstream/main`.
+
+- **`NumberInput` could not show focus.** `number_input_widget_impl.rs` painted the
+  identical `theme.ring` stroke for both the focused and the hovered branch, so hovering a
+  number input looked exactly like focusing it. `input/input_style.rs` sets the crate's
+  convention — `ring` when focused, `border` otherwise — and the hovered branch now follows
+  it. Clippy found this as `if_same_then_else`.
+- **`Resizable::new(initial_fraction)` did nothing.** The value was clamped and stored, but
+  `resizable_show.rs` read the split position solely from the caller's `&mut f32`, so
+  `new(0.3)` and `new(0.9)` behaved identically. `show` now seeds the caller's value on the
+  first frame for a given `ui.id()`, which honours the documented contract without changing
+  the signature. Clippy found this as `dead_code`.
+
+## Clippy policy
+
+The crate is clean under:
+
+```
+cargo clippy -p egui-shadcn --all-targets -- -D warnings -A clippy::module_inception
+```
+
+`module_inception` is the single accepted lint, allowed in `Cargo.toml` with its rationale:
+the crate is deliberately one public item per file, so every `widgets/foo/` holds a
+`foo.rs`. Restructuring all 249 files to satisfy it would cost cheap rebases onto upstream
+for no reader benefit.
+
+Everything else clippy reported was fixed rather than silenced. The one change with real
+risk was `icons/paint_icon.rs`, where five functions carried geometry as loose `f32` pairs
+and tripped `too_many_arguments`. They now take `Pos2`/`Vec2` plus a single
+`emath::TSTransform` in place of the `scale: f32, offset: Pos2` pair, with `ArcParams` and
+`ArcBasis` carrying the SVG arc flags and the rotated-ellipse frame. Because that is
+untested Bézier maths, `paint_icon.rs` gained characterization tests pinning the exact
+emitted points *before* the refactor; they are a record of behaviour, not intent, so
+deliberately changing the curve maths means recapturing them.
+
+Note the crate is **not** rustfmt-clean upstream (208 diffs), so do not run `cargo fmt`
+across it — the churn would bury the real delta. Format by hand, locally.
+
 ## Behaviour worth knowing before using more widgets
 
 - `ShadcnThemeExt::set_shadcn_theme` calls `all_styles_mut` and overwrites `window_fill`,

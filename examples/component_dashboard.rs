@@ -263,7 +263,8 @@ impl Default for DashboardApp {
             date_picker_state: egui_shadcn::DatePickerState::default(),
             progress_val: 0.66,
             number_f64: 42.0,
-            number_f32: 3.14,
+            // Arbitrary demo value; kept clear of 3.14 so it does not read as π.
+            number_f32: 3.5,
             number_i32: 10,
             input_group_text: String::new(),
             icon_tabs_idx: 0,
@@ -883,7 +884,7 @@ impl DashboardApp {
             .filter(|icon| query.is_empty() || icon.name().contains(&query))
             .collect();
 
-        egui_shadcn::Typography::small(&format!("{} icons", filtered.len())).show(ui);
+        egui_shadcn::Typography::small(format!("{} icons", filtered.len())).show(ui);
         ui.add_space(4.0);
 
         egui::ScrollArea::vertical()

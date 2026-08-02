@@ -85,6 +85,7 @@ const ROWS_PER_PAGE: usize = 10;
 // App state
 // ---------------------------------------------------------------------------
 
+#[derive(Default)]
 struct DashboardApp {
     dark_mode: bool,
     sidebar_collapsed: bool,
@@ -92,19 +93,6 @@ struct DashboardApp {
     chart_time_range: usize,
     table_tab: usize,
     table_page: usize,
-}
-
-impl Default for DashboardApp {
-    fn default() -> Self {
-        Self {
-            dark_mode: false,
-            sidebar_collapsed: false,
-            selected_nav: 0,
-            chart_time_range: 0,
-            table_tab: 0,
-            table_page: 0,
-        }
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -694,7 +682,7 @@ impl DashboardApp {
     }
 
     fn draw_outline_table(&mut self, ui: &mut egui::Ui, theme: &egui_shadcn::ShadcnTheme) {
-        let total_pages = (TABLE_DATA.len() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
+        let total_pages = TABLE_DATA.len().div_ceil(ROWS_PER_PAGE);
         self.table_page = self.table_page.min(total_pages.saturating_sub(1));
 
         let start = self.table_page * ROWS_PER_PAGE;
