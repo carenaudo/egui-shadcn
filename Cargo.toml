@@ -23,26 +23,12 @@ include = [
 name = "egui_shadcn"
 path = "src/lib.rs"
 
-# Upstream's style, left as-is so the fork stays trivial to rebase. Silenced
-# here rather than fixed in place, so `cargo clippy --workspace` keeps
-# reporting only this project's own code.
 [lints.clippy]
-approx_constant = "allow"
-bool_comparison = "allow"
-collapsible_if = "allow"
-derivable_impls = "allow"
-if_same_then_else = "allow"
-let_and_return = "allow"
-manual_div_ceil = "allow"
+# The crate is deliberately one public item per file, so every `widgets/foo/`
+# contains a `foo.rs`. Restructuring all 249 files to satisfy this would cost
+# cheap rebases onto upstream for no reader benefit. Everything else clippy
+# reports here is fixed rather than silenced.
 module_inception = "allow"
-needless_borrows_for_generic_args = "allow"
-needless_range_loop = "allow"
-new_without_default = "allow"
-nonminimal_bool = "allow"
-too_many_arguments = "allow"
-
-[lints.rust]
-dead_code = "allow"
 
 # Vendored fork — see VENDORING.md. `egui`/`eframe` follow the workspace so a
 # future egui bump surfaces here as a compile error instead of a silent second
@@ -69,3 +55,8 @@ path = "examples/component_dashboard.rs"
 [[example]]
 name = "dashboard"
 path = "examples/dashboard.rs"
+
+[[example]]
+name = "theme_gallery"
+path = "examples/theme_gallery.rs"
+
