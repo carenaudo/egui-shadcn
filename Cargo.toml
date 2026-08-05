@@ -55,3 +55,8 @@ path = "examples/component_dashboard.rs"
 [[example]]
 name = "dashboard"
 path = "examples/dashboard.rs"
+
+[[example]]
+name = "theme_gallery"
+path = "examples/theme_gallery.rs"
+
