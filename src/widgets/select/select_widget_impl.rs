@@ -13,7 +13,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         let width = self.width.unwrap_or(ui.available_width().min(200.0));
         let desired = egui::vec2(width, height);
 
-        let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::click());
+        let (rect, mut response) = ui.allocate_exact_size(desired, egui::Sense::click());
         let popup_id = response.id.with("popup");
 
         if ui.is_rect_visible(rect) {
@@ -118,6 +118,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                     }),
             );
 
+        let mut selection_changed = false;
         popup.show(|ui: &mut egui::Ui| {
             let popup_width = width.max(144.0);
             ui.set_min_width(popup_width);
@@ -174,12 +175,18 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                 }
 
                 if item_response.clicked() {
-                    *self.selected = Some(option.clone());
+                    if super::select::replace_optional(self.selected, option.clone()) {
+                        selection_changed = true;
+                    }
                     egui::Popup::close_id(ui.ctx(), popup_id);
                     ui.ctx().request_repaint();
                 }
             }
         });
+
+        if selection_changed {
+            response.mark_changed();
+        }
 
         response
     }
@@ -202,7 +209,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
         let width = self.width.unwrap_or(ui.available_width().min(200.0));
         let desired = egui::vec2(width, height);
 
-        let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::click());
+        let (rect, mut response) = ui.allocate_exact_size(desired, egui::Sense::click());
         let popup_id = response.id.with("popup");
 
         if ui.is_rect_visible(rect) {
@@ -300,6 +307,7 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                     }),
             );
 
+        let mut selection_changed = false;
         popup.show(|ui: &mut egui::Ui| {
             let popup_width = width.max(144.0);
             ui.set_min_width(popup_width);
@@ -356,12 +364,18 @@ impl<T: Clone + std::fmt::Display + PartialEq + 'static> egui::Widget
                 }
 
                 if item_response.clicked() {
-                    *self.selected = option.clone();
+                    if super::select::replace_value(self.selected, option.clone()) {
+                        selection_changed = true;
+                    }
                     egui::Popup::close_id(ui.ctx(), popup_id);
                     ui.ctx().request_repaint();
                 }
             }
         });
+
+        if selection_changed {
+            response.mark_changed();
+        }
 
         response
     }

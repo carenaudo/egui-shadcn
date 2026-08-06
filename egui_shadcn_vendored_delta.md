@@ -45,6 +45,13 @@ Upstream `egui-shadcn` was designed for `egui 0.33`. To integrate smoothly with 
 
 ## 3. New Themes & Examples Created
 
+### Selector change reporting
+
+`Select` and `SelectValue` now mark their returned `egui::Response` as changed
+only when a different option is selected. The bound value is updated before
+the response is returned, matching egui's standard widget contract and allowing
+editor consumers to react to selection changes in the same frame.
+
 ### 10 Theme Families / 20 Variants
 
 All themes include explicit doc-comments and contribution attribution for upstream design systems ([shadcn/ui](https://ui.shadcn.com) and [Tailwind CSS](https://tailwindcss.com) color scales):

@@ -1,5 +1,23 @@
 //! shadcn-styled Select builder struct.
 
+pub(crate) fn replace_optional<T: PartialEq>(selected: &mut Option<T>, option: T) -> bool {
+    if selected.as_ref() == Some(&option) {
+        false
+    } else {
+        *selected = Some(option);
+        true
+    }
+}
+
+pub(crate) fn replace_value<T: PartialEq>(selected: &mut T, option: T) -> bool {
+    if *selected == option {
+        false
+    } else {
+        *selected = option;
+        true
+    }
+}
+
 /// A dropdown select widget styled after shadcn/ui.
 ///
 /// `T` must be cloneable, displayable, and comparable. The widget takes a mutable
@@ -52,6 +70,28 @@ pub struct SelectValue<'a, T: Clone + std::fmt::Display + PartialEq + 'static> {
     pub(crate) options: &'a [T],
     pub(crate) width: Option<f32>,
     pub(crate) selected_text_override: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{replace_optional, replace_value};
+
+    #[test]
+    fn optional_selection_reports_only_real_changes() {
+        let mut selected = Some("one");
+        assert!(!replace_optional(&mut selected, "one"));
+        assert_eq!(selected, Some("one"));
+        assert!(replace_optional(&mut selected, "two"));
+        assert_eq!(selected, Some("two"));
+    }
+
+    #[test]
+    fn value_selection_reports_only_real_changes() {
+        let mut selected = "one";
+        assert!(!replace_value(&mut selected, "one"));
+        assert!(replace_value(&mut selected, "two"));
+        assert_eq!(selected, "two");
+    }
 }
 
 impl<'a, T: Clone + std::fmt::Display + PartialEq + 'static> SelectValue<'a, T> {
