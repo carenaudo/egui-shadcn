@@ -32,10 +32,10 @@ module_inception = "allow"
 
 # Vendored fork — see VENDORING.md. `egui`/`eframe` follow the workspace so a
 # future egui bump surfaces here as a compile error instead of a silent second
-# egui in the dependency graph. `egui_flex` 0.7 is the first release on 0.35.
+# egui in the dependency graph. `egui_flex` 0.8 is the first release on 0.36.
 [dependencies]
 egui.workspace = true
-egui_flex = "0.7"
+egui_flex = "0.8"
 
 [dev-dependencies]
 eframe.workspace = true

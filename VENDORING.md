@@ -7,19 +7,35 @@ This is a vendored fork of [egui-shadcn](https://github.com/pjankiewicz/egui-sha
 
 ---
 
-## 1. Compatibility Fixes (`egui 0.35` & Updated Cargo Packages)
+## 1. Compatibility Fixes (`egui 0.36` & Updated Cargo Packages)
 
 ### `Cargo.toml`
 | Dependency | Upstream | Here | Notes |
 |---|---|---|---|
-| `egui` | `0.33` | `0.35` | Workspace dependency |
-| `egui_flex` | `0.5` | `0.7` | First version on egui 0.35 |
-| `eframe` (dev) | `0.33` | `0.35` | Workspace dev-dependency |
+| `egui` | `0.33` | `0.36` | Workspace dependency |
+| `egui_flex` | `0.5` | `0.8` | First version on egui 0.36 |
+| `eframe` (dev) | `0.33` | `0.36` | Workspace dev-dependency |
+
+The `web/` wasm demo crate (pinned `egui`/`eframe` `0.33`, workspace-`exclude`d)
+was removed rather than ported — it was already stale and unused.
 
 ### API Migrations
 - `src/theme/shadcn_theme_ext.rs` — Replaced deprecated `Context::style_mut` with `all_styles_mut` to maintain single-style window fill, stroke, and shadow overrides for popups.
 - `src/widgets/{input,textarea,input_group}` — Replaced boolean `.frame(false)` with `Frame::NONE.inner_margin(Margin::symmetric(4, 2))` to prevent 4px/2px layout shifts.
 - `Painter::rect_stroke` — Updated calls across widgets to match `egui 0.35` `StrokeKind` parameters.
+- `RawInput::modifiers` was removed in `egui 0.36` (modifiers now arrive as
+  part of each `Event`); the one construction site
+  (`crates/rpg_editor_ui/src/shortcuts.rs`, workspace-side) dropped the
+  now-nonexistent field assignment.
+- `egui 0.36`'s `epaint::TexturesDelta` gained a `Drop` impl that
+  `debug_assert`s if it still holds unapplied deltas. Every headless test
+  that calls `ctx.run_ui(...)` and discards the `FullOutput` without
+  painting now explicitly calls `.textures_delta.clear()` on the result —
+  see `src/widgets/command/command_show.rs` in this fork, and the
+  equivalent sites across `rpg_editor_ui`'s test harnesses workspace-side.
+- `egui_dock 0.20 → 0.21` added a required `TabViewer::id` method (workspace
+  side, `crates/rpg_editor_ui/src/dock.rs`): implemented as
+  `Id::new(*tab)`, which required adding `Hash` to `EditorTab`'s derive.
 
 ---
 

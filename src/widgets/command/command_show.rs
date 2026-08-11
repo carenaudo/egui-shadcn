@@ -314,13 +314,18 @@ mod tests {
 
         for pressed in keys {
             let input = pressed.map_or_else(egui::RawInput::default, key);
-            let _ = ctx.run_ui(input, |ui| {
+            // egui 0.36 debug_asserts on drop if a FullOutput's texture
+            // deltas were never applied; this harness never paints, so clear
+            // rather than apply them.
+            ctx.run_ui(input, |ui| {
                 let got =
                     super::super::command::Command::new(items()).show(ui.ctx(), &mut open, search);
                 if got.is_some() {
                     picked = got;
                 }
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         picked
@@ -424,15 +429,17 @@ mod tests {
             key(egui::Key::ArrowDown),
             key(egui::Key::ArrowDown),
         ] {
-            let _ = ctx.run_ui(input, |ui| {
+            ctx.run_ui(input, |ui| {
                 super::super::command::Command::new(items()).show(ui.ctx(), &mut open, &mut search);
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         // …then narrow the list and hit Enter.
         search.push_str("run");
         for input in [egui::RawInput::default(), key(egui::Key::Enter)] {
-            let _ = ctx.run_ui(input, |ui| {
+            ctx.run_ui(input, |ui| {
                 let got = super::super::command::Command::new(items()).show(
                     ui.ctx(),
                     &mut open,
@@ -441,7 +448,9 @@ mod tests {
                 if got.is_some() {
                     picked = got;
                 }
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         // "Playtest Debug" is the first Run entry, not the third overall.
@@ -456,14 +465,16 @@ mod tests {
         let mut search = String::new();
 
         for input in [egui::RawInput::default(), key(egui::Key::Escape)] {
-            let _ = ctx.run_ui(input, |ui| {
+            ctx.run_ui(input, |ui| {
                 let got = super::super::command::Command::new(items()).show(
                     ui.ctx(),
                     &mut open,
                     &mut search,
                 );
                 assert!(got.is_none());
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         assert!(!open);
