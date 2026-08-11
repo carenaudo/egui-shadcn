@@ -84,8 +84,7 @@ impl eframe::App for ShadcnDemo {
                             egui::FontId::proportional(14.0),
                             theme.foreground,
                         );
-                        let (r, _) =
-                            ui.allocate_exact_size(galley.size(), egui::Sense::hover());
+                        let (r, _) = ui.allocate_exact_size(galley.size(), egui::Sense::hover());
                         ui.painter().galley(r.min, galley, theme.foreground);
                         ui.add(egui_shadcn::Switch::new(&mut self.dark_mode));
                     });
@@ -205,10 +204,7 @@ impl ShadcnDemo {
                                 .placeholder("1234 5678 9012 3456")
                                 .desired_width(ui.available_width())
                                 .show(ui);
-                            egui_shadcn::FieldDescription::show(
-                                ui,
-                                "Enter your 16-digit number.",
-                            );
+                            egui_shadcn::FieldDescription::show(ui, "Enter your 16-digit number.");
                         });
                         ui.vertical(|ui| {
                             egui_shadcn::Label::new("CVV").show(ui);
@@ -412,15 +408,12 @@ impl ShadcnDemo {
                             "Verify via email or phone number.",
                         );
                     });
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::Center),
-                        |ui| {
-                            egui_shadcn::Button::new("Enable")
-                                .variant(egui_shadcn::ButtonVariant::Outline)
-                                .size(egui_shadcn::ComponentSize::Sm)
-                                .show(ui);
-                        },
-                    );
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        egui_shadcn::Button::new("Enable")
+                            .variant(egui_shadcn::ButtonVariant::Outline)
+                            .size(egui_shadcn::ComponentSize::Sm)
+                            .show(ui);
+                    });
                 });
             });
 
@@ -430,15 +423,13 @@ impl ShadcnDemo {
             .variant(egui_shadcn::ItemVariant::Outline)
             .show(ui, |ui| {
                 ui.horizontal(|ui| {
-                    let theme =
-                        egui_shadcn::ShadcnThemeExt::shadcn_theme(ui.ctx());
+                    let theme = egui_shadcn::ShadcnThemeExt::shadcn_theme(ui.ctx());
                     let galley = ui.painter().layout_no_wrap(
                         "\u{2713}".to_owned(),
                         egui::FontId::proportional(14.0),
                         theme.primary,
                     );
-                    let (r, _) =
-                        ui.allocate_exact_size(galley.size(), egui::Sense::hover());
+                    let (r, _) = ui.allocate_exact_size(galley.size(), egui::Sense::hover());
                     ui.painter().galley(r.min, galley, theme.primary);
                     egui_shadcn::Label::new("Your profile has been verified.").show(ui);
                 });
@@ -457,8 +448,7 @@ impl ShadcnDemo {
                         "Select the compute environment for your cluster.",
                     );
                     ui.add_space(4.0);
-                    let options =
-                        ["Kubernetes".to_owned(), "Virtual Machine".to_owned()];
+                    let options = ["Kubernetes".to_owned(), "Virtual Machine".to_owned()];
                     ui.add(egui_shadcn::RadioGroup::new(
                         &mut self.infra_choice,
                         &options,
@@ -469,10 +459,7 @@ impl ShadcnDemo {
 
                 // GPU Count
                 egui_shadcn::Label::new("Number of GPUs").show(ui);
-                egui_shadcn::FieldDescription::show(
-                    ui,
-                    "You can add more later.",
-                );
+                egui_shadcn::FieldDescription::show(ui, "You can add more later.");
                 ui.add_space(4.0);
                 egui_shadcn::Input::new(&mut self.gpu_count)
                     .desired_width(60.0)
@@ -489,14 +476,9 @@ impl ShadcnDemo {
                             "Allow the wallpaper to be tinted.",
                         );
                     });
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::Center),
-                        |ui| {
-                            ui.add(egui_shadcn::Switch::new(
-                                &mut self.wallpaper_tinting,
-                            ));
-                        },
-                    );
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.add(egui_shadcn::Switch::new(&mut self.wallpaper_tinting));
+                    });
                 });
             });
         });
@@ -589,21 +571,10 @@ impl ShadcnDemo {
                 "Select the option that best describes how you heard about us.",
             );
             ui.add_space(8.0);
-            ui.add(
-                egui_shadcn::Checkbox::new(&mut self.hear_social)
-                    .label("Social Media"),
-            );
-            ui.add(
-                egui_shadcn::Checkbox::new(&mut self.hear_search)
-                    .label("Search Engine"),
-            );
-            ui.add(
-                egui_shadcn::Checkbox::new(&mut self.hear_referral)
-                    .label("Referral"),
-            );
-            ui.add(
-                egui_shadcn::Checkbox::new(&mut self.hear_other).label("Other"),
-            );
+            ui.add(egui_shadcn::Checkbox::new(&mut self.hear_social).label("Social Media"));
+            ui.add(egui_shadcn::Checkbox::new(&mut self.hear_search).label("Search Engine"));
+            ui.add(egui_shadcn::Checkbox::new(&mut self.hear_referral).label("Referral"));
+            ui.add(egui_shadcn::Checkbox::new(&mut self.hear_other).label("Other"));
         });
     }
 
@@ -614,10 +585,7 @@ impl ShadcnDemo {
             egui_shadcn::Spinner::new().size(24.0).show(ui);
             ui.add_space(8.0);
             egui_shadcn::Label::new("Processing your request").show(ui);
-            egui_shadcn::FieldDescription::show(
-                ui,
-                "Please wait while we process your request.",
-            );
+            egui_shadcn::FieldDescription::show(ui, "Please wait while we process your request.");
             ui.add_space(8.0);
             egui_shadcn::Button::new("Cancel")
                 .variant(egui_shadcn::ButtonVariant::Outline)

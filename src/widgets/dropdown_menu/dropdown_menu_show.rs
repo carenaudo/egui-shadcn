@@ -44,14 +44,9 @@ impl super::dropdown_menu::DropdownMenu {
                 color: egui::Color32::from_black_alpha(8),
             });
 
-        let popup = egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            trigger_response,
-            ui.layer_id(),
-        )
-        .open_memory(toggle_cmd)
-        .frame(themed_frame);
+        let popup = egui::Popup::new(popup_id, ui.ctx().clone(), trigger_response, ui.layer_id())
+            .open_memory(toggle_cmd)
+            .frame(themed_frame);
 
         let mut selected_idx = None;
 
@@ -61,8 +56,12 @@ impl super::dropdown_menu::DropdownMenu {
             let mut max_shortcut_w: f32 = 0.0;
 
             for item in items {
-                if let super::dropdown_menu::MenuItem::Item { label, shortcut, .. } = item {
-                    let lw = ui.painter()
+                if let super::dropdown_menu::MenuItem::Item {
+                    label, shortcut, ..
+                } = item
+                {
+                    let lw = ui
+                        .painter()
                         .layout_no_wrap(
                             label.clone(),
                             egui::FontId::proportional(14.0),
@@ -73,7 +72,8 @@ impl super::dropdown_menu::DropdownMenu {
                     max_label_w = max_label_w.max(lw);
 
                     if let Some(sc) = shortcut {
-                        let sw = ui.painter()
+                        let sw = ui
+                            .painter()
                             .layout_no_wrap(
                                 sc.clone(),
                                 egui::FontId::proportional(12.0),
@@ -86,7 +86,11 @@ impl super::dropdown_menu::DropdownMenu {
                 }
             }
 
-            let shortcut_space = if max_shortcut_w > 0.0 { max_shortcut_w + 24.0 } else { 0.0 };
+            let shortcut_space = if max_shortcut_w > 0.0 {
+                max_shortcut_w + 24.0
+            } else {
+                0.0
+            };
             let menu_width = (max_label_w + shortcut_space + 24.0).max(120.0);
             ui.set_min_width(menu_width);
             ui.set_max_width(menu_width);
@@ -94,7 +98,11 @@ impl super::dropdown_menu::DropdownMenu {
             let mut item_idx = 0;
             for item in items {
                 match item {
-                    super::dropdown_menu::MenuItem::Item { label, shortcut, enabled } => {
+                    super::dropdown_menu::MenuItem::Item {
+                        label,
+                        shortcut,
+                        enabled,
+                    } => {
                         let current_idx = item_idx;
                         item_idx += 1;
 
@@ -155,15 +163,10 @@ impl super::dropdown_menu::DropdownMenu {
                     }
                     super::dropdown_menu::MenuItem::Separator => {
                         ui.add_space(2.0);
-                        let (sep_rect, _) = ui.allocate_exact_size(
-                            egui::vec2(menu_width, 1.0),
-                            egui::Sense::hover(),
-                        );
-                        ui.painter().rect_filled(
-                            sep_rect,
-                            egui::CornerRadius::ZERO,
-                            theme.border,
-                        );
+                        let (sep_rect, _) = ui
+                            .allocate_exact_size(egui::vec2(menu_width, 1.0), egui::Sense::hover());
+                        ui.painter()
+                            .rect_filled(sep_rect, egui::CornerRadius::ZERO, theme.border);
                         ui.add_space(2.0);
                     }
                 }

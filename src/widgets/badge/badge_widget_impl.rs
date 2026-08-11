@@ -12,7 +12,7 @@ impl egui::Widget for super::badge::Badge {
         );
 
         let h_padding: f32 = 8.0; // px-2
-        let height: f32 = 20.0;   // h-5
+        let height: f32 = 20.0; // h-5
         let desired = egui::vec2(galley.size().x + h_padding * 2.0, height);
         let (rect, response) = ui.allocate_exact_size(desired, egui::Sense::hover());
 

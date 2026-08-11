@@ -9,11 +9,7 @@ pub fn resolve_input_style(
     let corner_radius = theme.radius; // rounded-lg (Nova)
 
     super::resolved_input_style::ResolvedInputStyle {
-        bg: crate::paint::interpolate_color::interpolate_color(
-            theme.background,
-            theme.muted,
-            0.4,
-        ),
+        bg: crate::paint::interpolate_color::interpolate_color(theme.background, theme.muted, 0.4),
         border_color,
         text_color: theme.foreground,
         placeholder_color: theme.muted_foreground,

@@ -16,10 +16,7 @@ impl super::button_group::ButtonGroup {
     /// Buttons are placed directly in the parent UI (no nested layout scope)
     /// so they share the same vertical alignment context as siblings,
     /// matching how web shadcn/ui works with CSS flexbox.
-    pub fn show(
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::InnerResponse<()> {
+    pub fn show(ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::InnerResponse<()> {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = theme.radius;
         let key = Self::context_key();
@@ -56,8 +53,7 @@ impl super::button_group::ButtonGroup {
 
         // Read boundaries, group rect, final count, and deactivate
         let (boundaries, group_rect, final_count) = ui.ctx().data_mut(|d| {
-            let ctx = d
-                .get_temp::<super::button_group_context::ButtonGroupContext>(key);
+            let ctx = d.get_temp::<super::button_group_context::ButtonGroupContext>(key);
             d.insert_temp(
                 key,
                 super::button_group_context::ButtonGroupContext {
@@ -70,12 +66,15 @@ impl super::button_group::ButtonGroup {
         });
 
         // Cache this group's count for next frame
-        ui.ctx()
-            .data_mut(|d| d.insert_temp(count_key, final_count));
+        ui.ctx().data_mut(|d| d.insert_temp(count_key, final_count));
 
         // Draw outer ring and dividers using the union rect from buttons
         let rect = group_rect.unwrap_or(egui::Rect::NOTHING);
-        let response = ui.interact(rect, ui.auto_id_with("btn_group_ring"), egui::Sense::hover());
+        let response = ui.interact(
+            rect,
+            ui.auto_id_with("btn_group_ring"),
+            egui::Sense::hover(),
+        );
 
         if ui.is_rect_visible(rect) {
             let ring_color = egui::Color32::from_rgba_unmultiplied(
@@ -105,6 +104,9 @@ impl super::button_group::ButtonGroup {
             }
         }
 
-        egui::InnerResponse { inner: (), response }
+        egui::InnerResponse {
+            inner: (),
+            response,
+        }
     }
 }

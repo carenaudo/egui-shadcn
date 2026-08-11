@@ -2,10 +2,7 @@
 
 impl super::empty::Empty {
     /// Renders a dashed-border container with content inside.
-    pub fn show(
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::InnerResponse<()> {
+    pub fn show(ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::InnerResponse<()> {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = (theme.radius + 2.0).round() as u8; // rounded-xl
 

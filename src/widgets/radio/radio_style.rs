@@ -14,7 +14,11 @@ pub fn resolve_radio_style(
         theme.input // Nova: border-input instead of border
     };
 
-    let dot_color = if selected { theme.primary } else { egui::Color32::TRANSPARENT };
+    let dot_color = if selected {
+        theme.primary
+    } else {
+        egui::Color32::TRANSPARENT
+    };
 
     super::resolved_radio_style::ResolvedRadioStyle {
         circle_border,

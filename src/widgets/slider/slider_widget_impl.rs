@@ -26,8 +26,14 @@ impl egui::Widget for super::slider::Slider<'_> {
             )
         });
 
-        let prefix_w = prefix_galley.as_ref().map(|g| g.size().x + 6.0).unwrap_or(0.0);
-        let suffix_w = suffix_galley.as_ref().map(|g| g.size().x + 6.0).unwrap_or(0.0);
+        let prefix_w = prefix_galley
+            .as_ref()
+            .map(|g| g.size().x + 6.0)
+            .unwrap_or(0.0);
+        let suffix_w = suffix_galley
+            .as_ref()
+            .map(|g| g.size().x + 6.0)
+            .unwrap_or(0.0);
         let total_width = prefix_w + slider_width + suffix_w;
 
         let desired = egui::vec2(total_width, total_height);

@@ -11,8 +11,7 @@ impl<T: Clone + PartialEq + std::fmt::Display> egui::Widget
                 let is_selected = option == self.selected;
                 let mut sel = is_selected;
                 let r = ui.add(
-                    crate::widgets::radio::radio::Radio::new(&mut sel)
-                        .label(option.to_string()),
+                    crate::widgets::radio::radio::Radio::new(&mut sel).label(option.to_string()),
                 );
                 if r.clicked() && !is_selected {
                     *self.selected = option.clone();

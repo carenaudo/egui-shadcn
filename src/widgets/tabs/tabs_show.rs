@@ -12,36 +12,33 @@ impl super::tabs::Tabs {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = theme.radius.round() as u8;
 
-        
+        ui.vertical(|ui| {
+            // Tab bar
+            let tab_frame = egui::Frame::NONE
+                .fill(theme.muted)
+                .inner_margin(egui::Margin::same(2))
+                .corner_radius(egui::CornerRadius::same(cr));
 
-        ui
-            .vertical(|ui| {
-                // Tab bar
-                let tab_frame = egui::Frame::NONE
-                    .fill(theme.muted)
-                    .inner_margin(egui::Margin::same(2))
-                    .corner_radius(egui::CornerRadius::same(cr));
-
-                tab_frame.show(ui, |ui| {
-                    ui.horizontal(|ui| {
-                        ui.spacing_mut().item_spacing.x = 2.0;
-                        for (idx, label) in self.labels.iter().enumerate() {
-                            let is_active = idx == *selected;
-                            let response = Self::render_tab(ui, &theme, label, is_active, cr);
-                            if response.clicked() {
-                                *selected = idx;
-                                ui.ctx().request_repaint();
-                            }
+            tab_frame.show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    ui.spacing_mut().item_spacing.x = 2.0;
+                    for (idx, label) in self.labels.iter().enumerate() {
+                        let is_active = idx == *selected;
+                        let response = Self::render_tab(ui, &theme, label, is_active, cr);
+                        if response.clicked() {
+                            *selected = idx;
+                            ui.ctx().request_repaint();
                         }
-                    });
+                    }
                 });
+            });
 
-                ui.add_space(8.0);
+            ui.add_space(8.0);
 
-                // Content area
-                content(ui, *selected);
-            })
-            .response
+            // Content area
+            content(ui, *selected);
+        })
+        .response
     }
 
     fn render_tab(
@@ -141,33 +138,30 @@ impl super::tabs::IconTabs {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = theme.radius.round() as u8;
 
-        
+        ui.vertical(|ui| {
+            let tab_frame = egui::Frame::NONE
+                .fill(theme.muted)
+                .inner_margin(egui::Margin::same(2))
+                .corner_radius(egui::CornerRadius::same(cr));
 
-        ui
-            .vertical(|ui| {
-                let tab_frame = egui::Frame::NONE
-                    .fill(theme.muted)
-                    .inner_margin(egui::Margin::same(2))
-                    .corner_radius(egui::CornerRadius::same(cr));
-
-                tab_frame.show(ui, |ui| {
-                    ui.horizontal(|ui| {
-                        ui.spacing_mut().item_spacing.x = 2.0;
-                        for (idx, entry) in self.entries.iter().enumerate() {
-                            let is_active = idx == *selected;
-                            let response = Self::render_icon_tab(ui, &theme, entry, is_active, cr);
-                            if response.clicked() {
-                                *selected = idx;
-                                ui.ctx().request_repaint();
-                            }
+            tab_frame.show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    ui.spacing_mut().item_spacing.x = 2.0;
+                    for (idx, entry) in self.entries.iter().enumerate() {
+                        let is_active = idx == *selected;
+                        let response = Self::render_icon_tab(ui, &theme, entry, is_active, cr);
+                        if response.clicked() {
+                            *selected = idx;
+                            ui.ctx().request_repaint();
                         }
-                    });
+                    }
                 });
+            });
 
-                ui.add_space(8.0);
-                content(ui, *selected);
-            })
-            .response
+            ui.add_space(8.0);
+            content(ui, *selected);
+        })
+        .response
     }
 
     fn render_icon_tab(

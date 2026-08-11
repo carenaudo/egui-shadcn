@@ -2,11 +2,7 @@
 
 impl super::alert::Alert {
     /// Renders the alert and calls `content` for the description area.
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let style = super::alert_variant_style::resolve_alert_style(&theme, self.variant);
         let cr = egui::CornerRadius::same(theme.radius.round() as u8);

@@ -30,8 +30,7 @@ impl super::collapsible::Collapsible {
                     icon_size + gap + galley.size().x,
                     galley.size().y.max(icon_size),
                 );
-                let (rect, trigger) =
-                    ui.allocate_exact_size(desired, egui::Sense::click());
+                let (rect, trigger) = ui.allocate_exact_size(desired, egui::Sense::click());
 
                 if ui.is_rect_visible(rect) {
                     let icon_rect = egui::Rect::from_min_size(

@@ -24,10 +24,7 @@ impl egui::Widget for super::progress::Progress {
             // Fill bar
             if self.value > 0.0 {
                 let fill_width = rect.width() * self.value;
-                let fill_rect = egui::Rect::from_min_size(
-                    rect.min,
-                    egui::vec2(fill_width, height),
-                );
+                let fill_rect = egui::Rect::from_min_size(rect.min, egui::vec2(fill_width, height));
                 painter.rect_filled(fill_rect, cr, theme.primary);
             }
         }

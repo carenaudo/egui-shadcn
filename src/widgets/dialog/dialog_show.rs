@@ -2,12 +2,7 @@
 
 impl super::dialog::Dialog {
     /// Shows the dialog when `open` is true. Content closure receives a `&mut Ui`.
-    pub fn show(
-        self,
-        ctx: &egui::Context,
-        open: &mut bool,
-        content: impl FnOnce(&mut egui::Ui),
-    ) {
+    pub fn show(self, ctx: &egui::Context, open: &mut bool, content: impl FnOnce(&mut egui::Ui)) {
         if !*open {
             return;
         }
@@ -16,10 +11,8 @@ impl super::dialog::Dialog {
 
         // Backdrop
         let screen = ctx.input(|i| i.viewport_rect());
-        let backdrop_layer = egui::LayerId::new(
-            egui::Order::Middle,
-            egui::Id::new("dialog_backdrop"),
-        );
+        let backdrop_layer =
+            egui::LayerId::new(egui::Order::Middle, egui::Id::new("dialog_backdrop"));
         let painter = ctx.layer_painter(backdrop_layer);
         painter.rect_filled(
             screen,
@@ -32,8 +25,7 @@ impl super::dialog::Dialog {
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
-                let (_, response) =
-                    ui.allocate_exact_size(screen.size(), egui::Sense::click());
+                let (_, response) = ui.allocate_exact_size(screen.size(), egui::Sense::click());
                 response
             });
 
@@ -66,28 +58,25 @@ impl super::dialog::Dialog {
                     ui.set_max_width(self.width);
 
                     // Close button
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::TOP),
-                        |ui| {
-                            let close_size = 16.0;
-                            let (close_rect, close_resp) = ui.allocate_exact_size(
-                                egui::vec2(close_size, close_size),
-                                egui::Sense::click(),
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
+                        let close_size = 16.0;
+                        let (close_rect, close_resp) = ui.allocate_exact_size(
+                            egui::vec2(close_size, close_size),
+                            egui::Sense::click(),
+                        );
+                        if ui.is_rect_visible(close_rect) {
+                            crate::icons::paint_icon::paint_icon(
+                                ui.painter(),
+                                close_rect,
+                                &crate::icons::lucide_icon::LucideIcon::X,
+                                theme.muted_foreground,
                             );
-                            if ui.is_rect_visible(close_rect) {
-                                crate::icons::paint_icon::paint_icon(
-                                    ui.painter(),
-                                    close_rect,
-                                    &crate::icons::lucide_icon::LucideIcon::X,
-                                    theme.muted_foreground,
-                                );
-                            }
-                            if close_resp.clicked() {
-                                *open = false;
-                                ctx.request_repaint();
-                            }
-                        },
-                    );
+                        }
+                        if close_resp.clicked() {
+                            *open = false;
+                            ctx.request_repaint();
+                        }
+                    });
 
                     if let Some(title) = self.title {
                         ui.label(

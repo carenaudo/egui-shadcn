@@ -36,11 +36,7 @@ impl super::area_chart::AreaChart {
         for i in 0..5 {
             let t = i as f32 / 4.0;
             let y = plot_rect.max.y - t * plot_rect.height();
-            painter.hline(
-                plot_rect.x_range(),
-                y,
-                egui::Stroke::new(0.5, theme.border),
-            );
+            painter.hline(plot_rect.x_range(), y, egui::Stroke::new(0.5, theme.border));
         }
 
         // Compute screen-space Y values per series
@@ -54,20 +50,12 @@ impl super::area_chart::AreaChart {
             let color = self.series[series_idx].color;
 
             let fill_alpha = if series_idx == 0 { 40 } else { 25 };
-            let fill_color = egui::Color32::from_rgba_unmultiplied(
-                color.r(),
-                color.g(),
-                color.b(),
-                fill_alpha,
-            );
+            let fill_color =
+                egui::Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), fill_alpha);
 
             let line_alpha = if series_idx == 0 { 180 } else { 120 };
-            let line_color = egui::Color32::from_rgba_unmultiplied(
-                color.r(),
-                color.g(),
-                color.b(),
-                line_alpha,
-            );
+            let line_color =
+                egui::Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), line_alpha);
 
             // Build baseline: previous series smooth curve, or flat bottom
             let baseline: Vec<egui::Pos2> = match &prev_smooth {
@@ -202,10 +190,10 @@ fn fill_between_curves(
     // Build triangle strip: for each column i, create two triangles
     // forming a quad between top[i], top[i+1], bottom[i], bottom[i+1]
     for i in 0..(n - 1) {
-        let t0 = i;           // top[i]
-        let t1 = i + 1;       // top[i+1]
-        let b0 = n + i;       // bottom[i]
-        let b1 = n + i + 1;   // bottom[i+1]
+        let t0 = i; // top[i]
+        let t1 = i + 1; // top[i+1]
+        let b0 = n + i; // bottom[i]
+        let b1 = n + i + 1; // bottom[i+1]
 
         mesh.indices.extend_from_slice(&[t0, b0, t1]);
         mesh.indices.extend_from_slice(&[t1, b0, b1]);
@@ -230,7 +218,11 @@ fn catmull_rom_to_smooth(points: &[egui::Pos2]) -> Vec<egui::Pos2> {
         let p_prev = if i == 0 { points[0] } else { points[i - 1] };
         let p_curr = points[i];
         let p_next = points[i + 1];
-        let p_next2 = if i + 2 < n { points[i + 2] } else { points[n - 1] };
+        let p_next2 = if i + 2 < n {
+            points[i + 2]
+        } else {
+            points[n - 1]
+        };
 
         // Catmull-Rom → cubic Bezier control points
         let cp1 = egui::pos2(

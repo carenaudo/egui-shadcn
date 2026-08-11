@@ -46,15 +46,7 @@ impl super::table::Table {
                         egui::Color32::TRANSPARENT
                     };
 
-                    Self::render_row(
-                        ui,
-                        row,
-                        &col_widths,
-                        available,
-                        bg,
-                        theme.foreground,
-                        false,
-                    );
+                    Self::render_row(ui, row, &col_widths, available, bg, theme.foreground, false);
 
                     // Row divider (not after last)
                     if row_idx < self.rows.len() - 1 {
@@ -65,15 +57,8 @@ impl super::table::Table {
             .response
     }
 
-    fn draw_hline(
-        ui: &mut egui::Ui,
-        width: f32,
-        theme: &crate::theme::shadcn_theme::ShadcnTheme,
-    ) {
-        let (line_rect, _) = ui.allocate_exact_size(
-            egui::vec2(width, 1.0),
-            egui::Sense::hover(),
-        );
+    fn draw_hline(ui: &mut egui::Ui, width: f32, theme: &crate::theme::shadcn_theme::ShadcnTheme) {
+        let (line_rect, _) = ui.allocate_exact_size(egui::vec2(width, 1.0), egui::Sense::hover());
         ui.painter().hline(
             line_rect.x_range(),
             line_rect.center().y,
@@ -94,10 +79,8 @@ impl super::table::Table {
         let height: f32 = if is_header { 40.0 } else { 44.0 };
         let font_size: f32 = if is_header { 13.0 } else { 14.0 };
 
-        let (row_rect, response) = ui.allocate_exact_size(
-            egui::vec2(total_width, height),
-            egui::Sense::hover(),
-        );
+        let (row_rect, response) =
+            ui.allocate_exact_size(egui::vec2(total_width, height), egui::Sense::hover());
 
         // Row hover highlight (data rows only)
         let actual_bg = if !is_header && response.hovered() {

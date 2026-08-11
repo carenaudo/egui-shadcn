@@ -45,18 +45,34 @@ fn parse_path_tag(tag: &str) -> Option<super::icon_element::IconElement> {
 }
 
 fn parse_circle_tag(tag: &str) -> Option<super::icon_element::IconElement> {
-    let cx = extract_attr(tag, "cx").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let cy = extract_attr(tag, "cy").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let r = extract_attr(tag, "r").and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let cx = extract_attr(tag, "cx")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let cy = extract_attr(tag, "cy")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let r = extract_attr(tag, "r")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
     Some(super::icon_element::IconElement::Circle { cx, cy, r })
 }
 
 fn parse_rect_tag(tag: &str) -> Option<super::icon_element::IconElement> {
-    let x = extract_attr(tag, "x").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let y = extract_attr(tag, "y").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let width = extract_attr(tag, "width").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let height = extract_attr(tag, "height").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let rx = extract_attr(tag, "rx").and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let x = extract_attr(tag, "x")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let y = extract_attr(tag, "y")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let width = extract_attr(tag, "width")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let height = extract_attr(tag, "height")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let rx = extract_attr(tag, "rx")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
     Some(super::icon_element::IconElement::Rect {
         x,
         y,
@@ -67,28 +83,48 @@ fn parse_rect_tag(tag: &str) -> Option<super::icon_element::IconElement> {
 }
 
 fn parse_line_tag(tag: &str) -> Option<super::icon_element::IconElement> {
-    let x1 = extract_attr(tag, "x1").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let y1 = extract_attr(tag, "y1").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let x2 = extract_attr(tag, "x2").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let y2 = extract_attr(tag, "y2").and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let x1 = extract_attr(tag, "x1")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let y1 = extract_attr(tag, "y1")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let x2 = extract_attr(tag, "x2")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let y2 = extract_attr(tag, "y2")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
     Some(super::icon_element::IconElement::Line { x1, y1, x2, y2 })
 }
 
 fn parse_polyline_tag(tag: &str) -> Option<super::icon_element::IconElement> {
     let points = extract_attr(tag, "points")?;
-    Some(super::icon_element::IconElement::Polyline(parse_points(&points)))
+    Some(super::icon_element::IconElement::Polyline(parse_points(
+        &points,
+    )))
 }
 
 fn parse_polygon_tag(tag: &str) -> Option<super::icon_element::IconElement> {
     let points = extract_attr(tag, "points")?;
-    Some(super::icon_element::IconElement::Polygon(parse_points(&points)))
+    Some(super::icon_element::IconElement::Polygon(parse_points(
+        &points,
+    )))
 }
 
 fn parse_ellipse_tag(tag: &str) -> Option<super::icon_element::IconElement> {
-    let cx = extract_attr(tag, "cx").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let cy = extract_attr(tag, "cy").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let rx = extract_attr(tag, "rx").and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let ry = extract_attr(tag, "ry").and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let cx = extract_attr(tag, "cx")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let cy = extract_attr(tag, "cy")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let rx = extract_attr(tag, "rx")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
+    let ry = extract_attr(tag, "ry")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0.0);
     Some(super::icon_element::IconElement::Ellipse { cx, cy, rx, ry })
 }
 
@@ -134,7 +170,10 @@ mod tests {
     fn parse_path_element() {
         let elems = parse_svg(r#"<path d="M 10 20 L 30 40" />"#);
         assert_eq!(elems.len(), 1);
-        assert!(matches!(elems[0], super::super::icon_element::IconElement::Path(_)));
+        assert!(matches!(
+            elems[0],
+            super::super::icon_element::IconElement::Path(_)
+        ));
     }
 
     #[test]
@@ -176,7 +215,8 @@ mod tests {
 
     #[test]
     fn parse_polygon_element() {
-        let elems = parse_svg(r#"<polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />"#);
+        let elems =
+            parse_svg(r#"<polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />"#);
         assert_eq!(elems.len(), 1);
         if let super::super::icon_element::IconElement::Polygon(pts) = &elems[0] {
             assert_eq!(pts.len(), 7);

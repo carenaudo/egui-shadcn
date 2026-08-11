@@ -8,10 +8,7 @@ pub struct FlexInst<'ui, 'inst>(pub(crate) &'inst mut egui_flex::FlexInstance<'u
 
 impl<'ui, 'inst> FlexInst<'ui, 'inst> {
     /// Add a widget at its natural size.
-    pub fn add(
-        &mut self,
-        widget: impl egui::Widget,
-    ) -> egui::InnerResponse<egui::Response> {
+    pub fn add(&mut self, widget: impl egui::Widget) -> egui::InnerResponse<egui::Response> {
         self.0.add_widget(egui_flex::FlexItem::new(), widget)
     }
 
@@ -26,10 +23,7 @@ impl<'ui, 'inst> FlexInst<'ui, 'inst> {
     }
 
     /// Add arbitrary UI content at natural size.
-    pub fn ui<R>(
-        &mut self,
-        content: impl FnOnce(&mut egui::Ui) -> R,
-    ) -> egui::InnerResponse<R> {
+    pub fn ui<R>(&mut self, content: impl FnOnce(&mut egui::Ui) -> R) -> egui::InnerResponse<R> {
         self.0.add_ui(egui_flex::FlexItem::new(), content)
     }
 
@@ -68,14 +62,11 @@ impl<'ui, 'inst> FlexInst<'ui, 'inst> {
         flex: super::flex::Flex,
         content: impl FnOnce(&mut FlexInst) -> R,
     ) -> egui::InnerResponse<R> {
-        self.0.add_flex(
-            egui_flex::FlexItem::new().grow(factor),
-            flex.0,
-            |inner| {
+        self.0
+            .add_flex(egui_flex::FlexItem::new().grow(factor), flex.0, |inner| {
                 let mut inst = FlexInst(inner);
                 content(&mut inst)
-            },
-        )
+            })
     }
 
     /// Add a widget with full [`egui_flex::FlexItem`] control.

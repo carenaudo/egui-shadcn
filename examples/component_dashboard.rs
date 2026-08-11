@@ -84,18 +84,9 @@ const CATEGORIES: &[(&str, &[&str])] = &[
             "Command",
         ],
     ),
-    (
-        "Feedback",
-        &["Toast", "Carousel", "Calendar", "DatePicker"],
-    ),
-    (
-        "Data Visualization",
-        &["AreaChart"],
-    ),
-    (
-        "Form Layout",
-        &["FieldGroup"],
-    ),
+    ("Feedback", &["Toast", "Carousel", "Calendar", "DatePicker"]),
+    ("Data Visualization", &["AreaChart"]),
+    ("Form Layout", &["FieldGroup"]),
 ];
 
 fn flat_index(cat: usize, item: usize) -> usize {
@@ -322,17 +313,14 @@ impl eframe::App for DashboardApp {
             .show(ui, |ui| {
                 ui.horizontal(|ui| {
                     egui_shadcn::Typography::h4("egui-shadcn").show(ui);
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::Center),
-                        |ui| {
-                            ui.add(egui_shadcn::Switch::new(&mut self.dark_mode));
-                            ui.label(
-                                egui::RichText::new("Dark")
-                                    .color(theme.muted_foreground)
-                                    .size(13.0),
-                            );
-                        },
-                    );
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.add(egui_shadcn::Switch::new(&mut self.dark_mode));
+                        ui.label(
+                            egui::RichText::new("Dark")
+                                .color(theme.muted_foreground)
+                                .size(13.0),
+                        );
+                    });
                 });
             });
 
@@ -377,15 +365,12 @@ impl eframe::App for DashboardApp {
                                 fg,
                             );
 
-                            let desired =
-                                egui::vec2(ui.available_width(), galley.size().y + 8.0);
+                            let desired = egui::vec2(ui.available_width(), galley.size().y + 8.0);
                             let (rect, response) =
                                 ui.allocate_exact_size(desired, egui::Sense::click());
 
                             if ui.is_rect_visible(rect) {
-                                let cr = egui::CornerRadius::same(
-                                    theme.radius.round() as u8,
-                                );
+                                let cr = egui::CornerRadius::same(theme.radius.round() as u8);
                                 if is_selected {
                                     ui.painter().rect_filled(rect, cr, theme.primary);
                                 } else if response.hovered() {
@@ -495,11 +480,7 @@ impl eframe::App for DashboardApp {
 // ---------------------------------------------------------------------------
 
 impl DashboardApp {
-    fn render_component(
-        &mut self,
-        ui: &mut egui::Ui,
-        theme: &egui_shadcn::ShadcnTheme,
-    ) {
+    fn render_component(&mut self, ui: &mut egui::Ui, theme: &egui_shadcn::ShadcnTheme) {
         let name = component_name(self.selected);
         egui_shadcn::Typography::h3(name).show(ui);
         ui.add_space(4.0);
@@ -584,8 +565,7 @@ impl DashboardApp {
         egui_shadcn::Typography::small("Row with gap").show(ui);
         ui.add_space(4.0);
         egui_shadcn::Flex::row().gap(8.0).show(ui, |f| {
-            f.add(egui_shadcn::Button::new("Cancel")
-                .variant(egui_shadcn::ButtonVariant::Outline));
+            f.add(egui_shadcn::Button::new("Cancel").variant(egui_shadcn::ButtonVariant::Outline));
             f.add(egui_shadcn::Button::new("Save"));
         });
 
@@ -606,8 +586,10 @@ impl DashboardApp {
         egui_shadcn::Typography::small("Grow (input fills, button stays natural)").show(ui);
         ui.add_space(4.0);
         egui_shadcn::Flex::row().gap(8.0).w_full().show(ui, |f| {
-            f.grow(1.0, egui_shadcn::Input::new(&mut self.flex_input_text)
-                .placeholder("Type a message..."));
+            f.grow(
+                1.0,
+                egui_shadcn::Input::new(&mut self.flex_input_text).placeholder("Type a message..."),
+            );
             f.add(egui_shadcn::Button::new("Send"));
         });
 
@@ -616,32 +598,48 @@ impl DashboardApp {
         // Justify end — buttons pushed to the right
         egui_shadcn::Typography::small("Justify end").show(ui);
         ui.add_space(4.0);
-        egui_shadcn::Flex::row().justify_end().gap(8.0).w_full().show(ui, |f| {
-            f.add(egui_shadcn::Button::new("Cancel")
-                .variant(egui_shadcn::ButtonVariant::Outline));
-            f.add(egui_shadcn::Button::new("Confirm"));
-        });
+        egui_shadcn::Flex::row()
+            .justify_end()
+            .gap(8.0)
+            .w_full()
+            .show(ui, |f| {
+                f.add(
+                    egui_shadcn::Button::new("Cancel").variant(egui_shadcn::ButtonVariant::Outline),
+                );
+                f.add(egui_shadcn::Button::new("Confirm"));
+            });
 
         ui.add_space(16.0);
 
         // Justify between — spacer pushes items apart
         egui_shadcn::Typography::small("Justify between").show(ui);
         ui.add_space(4.0);
-        egui_shadcn::Flex::row().justify_between().w_full().show(ui, |f| {
-            f.add(egui_shadcn::Button::new("Previous")
-                .variant(egui_shadcn::ButtonVariant::Outline));
-            f.add(egui_shadcn::Button::new("Next"));
-        });
+        egui_shadcn::Flex::row()
+            .justify_between()
+            .w_full()
+            .show(ui, |f| {
+                f.add(
+                    egui_shadcn::Button::new("Previous")
+                        .variant(egui_shadcn::ButtonVariant::Outline),
+                );
+                f.add(egui_shadcn::Button::new("Next"));
+            });
 
         ui.add_space(16.0);
 
         // Justify center
         egui_shadcn::Typography::small("Justify center").show(ui);
         ui.add_space(4.0);
-        egui_shadcn::Flex::row().justify_center().gap(8.0).w_full().show(ui, |f| {
-            f.add(egui_shadcn::Spinner::new().size(20.0));
-            f.ui(|ui| { ui.label("Loading..."); });
-        });
+        egui_shadcn::Flex::row()
+            .justify_center()
+            .gap(8.0)
+            .w_full()
+            .show(ui, |f| {
+                f.add(egui_shadcn::Spinner::new().size(20.0));
+                f.ui(|ui| {
+                    ui.label("Loading...");
+                });
+            });
 
         ui.add_space(16.0);
 
@@ -649,15 +647,34 @@ impl DashboardApp {
         egui_shadcn::Typography::small("Wrap (overflowing items wrap to next line)").show(ui);
         ui.add_space(4.0);
         let tags = [
-            "Rust", "egui", "shadcn", "flexbox", "layout", "widgets",
-            "responsive", "wrap", "gap", "grow", "animation", "theming",
-            "buttons", "inputs", "cards", "dialogs", "toasts", "badges",
+            "Rust",
+            "egui",
+            "shadcn",
+            "flexbox",
+            "layout",
+            "widgets",
+            "responsive",
+            "wrap",
+            "gap",
+            "grow",
+            "animation",
+            "theming",
+            "buttons",
+            "inputs",
+            "cards",
+            "dialogs",
+            "toasts",
+            "badges",
         ];
-        egui_shadcn::Flex::row().gap(4.0).wrap().w_full().show(ui, |f| {
-            for tag in &tags {
-                f.add(egui_shadcn::Badge::new(*tag));
-            }
-        });
+        egui_shadcn::Flex::row()
+            .gap(4.0)
+            .wrap()
+            .w_full()
+            .show(ui, |f| {
+                for tag in &tags {
+                    f.add(egui_shadcn::Badge::new(*tag));
+                }
+            });
 
         ui.add_space(16.0);
 
@@ -677,20 +694,26 @@ impl DashboardApp {
         ui.add_space(4.0);
         egui_shadcn::Flex::row().gap(16.0).w_full().show(ui, |f| {
             f.grow_nested(1.0, egui_shadcn::Flex::column().gap(8.0), |f| {
-                f.ui(|ui| { egui_shadcn::Label::new("First Name").show(ui); });
-                f.add(egui_shadcn::Input::new(&mut self.flex_first_name)
-                    .placeholder("John"));
-                f.ui(|ui| { egui_shadcn::Label::new("Last Name").show(ui); });
-                f.add(egui_shadcn::Input::new(&mut self.flex_last_name)
-                    .placeholder("Doe"));
+                f.ui(|ui| {
+                    egui_shadcn::Label::new("First Name").show(ui);
+                });
+                f.add(egui_shadcn::Input::new(&mut self.flex_first_name).placeholder("John"));
+                f.ui(|ui| {
+                    egui_shadcn::Label::new("Last Name").show(ui);
+                });
+                f.add(egui_shadcn::Input::new(&mut self.flex_last_name).placeholder("Doe"));
             });
             f.grow_nested(1.0, egui_shadcn::Flex::column().gap(8.0), |f| {
-                f.ui(|ui| { egui_shadcn::Label::new("Email").show(ui); });
-                f.add(egui_shadcn::Input::new(&mut self.flex_email)
-                    .placeholder("john@example.com"));
-                f.ui(|ui| { egui_shadcn::Label::new("Phone").show(ui); });
-                f.add(egui_shadcn::Input::new(&mut self.flex_phone)
-                    .placeholder("+1 555-1234"));
+                f.ui(|ui| {
+                    egui_shadcn::Label::new("Email").show(ui);
+                });
+                f.add(
+                    egui_shadcn::Input::new(&mut self.flex_email).placeholder("john@example.com"),
+                );
+                f.ui(|ui| {
+                    egui_shadcn::Label::new("Phone").show(ui);
+                });
+                f.add(egui_shadcn::Input::new(&mut self.flex_phone).placeholder("+1 555-1234"));
             });
         });
 
@@ -771,19 +794,22 @@ impl DashboardApp {
         ui.add_space(14.0);
         egui_shadcn::Typography::small("Dense toolbar").show(ui);
         ui.add_space(4.0);
-        egui_shadcn::Toolbar::new().dense().wrap(false).show(ui, |ui| {
-            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomOut)
-                .variant(egui_shadcn::ButtonVariant::Ghost)
-                .size(egui_shadcn::ComponentSize::Sm)
-                .show(ui);
-            egui_shadcn::Badge::new("100%")
-                .variant(egui_shadcn::BadgeVariant::Secondary)
-                .show(ui);
-            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomIn)
-                .variant(egui_shadcn::ButtonVariant::Ghost)
-                .size(egui_shadcn::ComponentSize::Sm)
-                .show(ui);
-        });
+        egui_shadcn::Toolbar::new()
+            .dense()
+            .wrap(false)
+            .show(ui, |ui| {
+                egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomOut)
+                    .variant(egui_shadcn::ButtonVariant::Ghost)
+                    .size(egui_shadcn::ComponentSize::Sm)
+                    .show(ui);
+                egui_shadcn::Badge::new("100%")
+                    .variant(egui_shadcn::BadgeVariant::Secondary)
+                    .show(ui);
+                egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ZoomIn)
+                    .variant(egui_shadcn::ButtonVariant::Ghost)
+                    .size(egui_shadcn::ComponentSize::Sm)
+                    .show(ui);
+            });
     }
 
     fn demo_status_bar(&self, ui: &mut egui::Ui) {
@@ -838,11 +864,7 @@ impl DashboardApp {
         egui_shadcn::Typography::muted("Muted text for secondary information.").show(ui);
     }
 
-    fn demo_icons(
-        &mut self,
-        ui: &mut egui::Ui,
-        theme: &egui_shadcn::ShadcnTheme,
-    ) {
+    fn demo_icons(&mut self, ui: &mut egui::Ui, theme: &egui_shadcn::ShadcnTheme) {
         egui_shadcn::Typography::muted("1671 Lucide icons rendered as vector strokes.").show(ui);
         ui.add_space(12.0);
 
@@ -895,10 +917,8 @@ impl DashboardApp {
                 for row in filtered.chunks(cols) {
                     ui.horizontal(|ui| {
                         for icon in row {
-                            let (rect, response) = ui.allocate_exact_size(
-                                egui::vec2(cell, cell),
-                                egui::Sense::hover(),
-                            );
+                            let (rect, response) = ui
+                                .allocate_exact_size(egui::vec2(cell, cell), egui::Sense::hover());
 
                             if ui.is_rect_visible(rect) {
                                 let color = if response.hovered() {
@@ -987,10 +1007,8 @@ impl DashboardApp {
             egui_shadcn::ColorSwatch::new(egui::Color32::from_rgb(25, 113, 194))
                 .selected(true)
                 .show(ui);
-            egui_shadcn::ColorSwatch::new(egui::Color32::from_rgba_unmultiplied(
-                25, 113, 194, 120,
-            ))
-            .show(ui);
+            egui_shadcn::ColorSwatch::new(egui::Color32::from_rgba_unmultiplied(25, 113, 194, 120))
+                .show(ui);
             egui_shadcn::ColorSwatch::new(egui::Color32::TRANSPARENT)
                 .label("Transparent")
                 .show_hex()
@@ -1025,7 +1043,9 @@ impl DashboardApp {
         egui_shadcn::Separator::horizontal().show(ui);
         ui.label("Content below");
         ui.add_space(12.0);
-        egui_shadcn::Separator::horizontal().text("With Label").show(ui);
+        egui_shadcn::Separator::horizontal()
+            .text("With Label")
+            .show(ui);
         ui.label("Content after labeled separator");
     }
 
@@ -1117,8 +1137,7 @@ impl DashboardApp {
     // ── Inputs ────────────────────────────────────────────────────────
 
     fn demo_button(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Clickable buttons with variant styles and sizes.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Clickable buttons with variant styles and sizes.").show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::Typography::small("Variants").show(ui);
@@ -1162,8 +1181,7 @@ impl DashboardApp {
         egui_shadcn::Typography::small("Icon Only").show(ui);
         ui.add_space(4.0);
         ui.horizontal(|ui| {
-            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Plus)
-                .show(ui);
+            egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Plus).show(ui);
             egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::Settings)
                 .variant(egui_shadcn::ButtonVariant::Outline)
                 .show(ui);
@@ -1237,9 +1255,7 @@ impl DashboardApp {
         egui_shadcn::Typography::small("Disabled").show(ui);
         ui.add_space(4.0);
         ui.horizontal(|ui| {
-            egui_shadcn::Button::new("Disabled")
-                .enabled(false)
-                .show(ui);
+            egui_shadcn::Button::new("Disabled").enabled(false).show(ui);
             egui_shadcn::Button::new("Disabled Outline")
                 .variant(egui_shadcn::ButtonVariant::Outline)
                 .enabled(false)
@@ -1267,8 +1283,7 @@ impl DashboardApp {
         ui.add_space(12.0);
 
         ui.add(
-            egui_shadcn::Checkbox::new(&mut self.checkbox_val)
-                .label("Accept terms and conditions"),
+            egui_shadcn::Checkbox::new(&mut self.checkbox_val).label("Accept terms and conditions"),
         );
         ui.add_space(4.0);
         ui.label(format!("Checked: {}", self.checkbox_val));
@@ -1363,8 +1378,7 @@ impl DashboardApp {
     }
 
     fn demo_slider(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Drag to select a numeric value within a range.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Drag to select a numeric value within a range.").show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::Slider::new(&mut self.slider_val, 0.0..=100.0)
@@ -1410,16 +1424,14 @@ impl DashboardApp {
             "Mango".to_owned(),
         ];
         ui.add(
-            egui_shadcn::Select::new(&mut self.select_val, &fruits)
-                .placeholder("Pick a fruit..."),
+            egui_shadcn::Select::new(&mut self.select_val, &fruits).placeholder("Pick a fruit..."),
         );
         ui.add_space(4.0);
         ui.label(format!("Selected: {:?}", self.select_val));
     }
 
     fn demo_combobox(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Searchable dropdown with type-ahead filtering.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Searchable dropdown with type-ahead filtering.").show(ui);
         ui.add_space(12.0);
 
         let frameworks = vec![
@@ -1539,11 +1551,9 @@ impl DashboardApp {
             .show(ui);
         ui.add_space(12.0);
 
-        egui_shadcn::Alert::new()
-            .title("Heads up!")
-            .show(ui, |ui| {
-                ui.label("You can add components to your app using the CLI.");
-            });
+        egui_shadcn::Alert::new().title("Heads up!").show(ui, |ui| {
+            ui.label("You can add components to your app using the CLI.");
+        });
 
         ui.add_space(8.0);
 
@@ -1578,8 +1588,7 @@ impl DashboardApp {
     }
 
     fn demo_collapsible(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("A section that can be toggled open or closed.")
-            .show(ui);
+        egui_shadcn::Typography::muted("A section that can be toggled open or closed.").show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::Collapsible::new("Click to toggle").show(
@@ -1624,36 +1633,20 @@ impl DashboardApp {
             "Role".to_owned(),
         ])
         .rows(vec![
-            vec![
-                "Alice".to_owned(),
-                "Active".to_owned(),
-                "Admin".to_owned(),
-            ],
-            vec![
-                "Bob".to_owned(),
-                "Inactive".to_owned(),
-                "Editor".to_owned(),
-            ],
+            vec!["Alice".to_owned(), "Active".to_owned(), "Admin".to_owned()],
+            vec!["Bob".to_owned(), "Inactive".to_owned(), "Editor".to_owned()],
             vec![
                 "Charlie".to_owned(),
                 "Active".to_owned(),
                 "Viewer".to_owned(),
             ],
-            vec![
-                "Diana".to_owned(),
-                "Active".to_owned(),
-                "Editor".to_owned(),
-            ],
+            vec!["Diana".to_owned(), "Active".to_owned(), "Editor".to_owned()],
         ])
         .striped()
         .show(ui);
     }
 
-    fn demo_aspect_ratio(
-        &self,
-        ui: &mut egui::Ui,
-        theme: &egui_shadcn::ShadcnTheme,
-    ) {
+    fn demo_aspect_ratio(&self, ui: &mut egui::Ui, theme: &egui_shadcn::ShadcnTheme) {
         egui_shadcn::Typography::muted("Maintains a fixed width-to-height ratio.").show(ui);
         ui.add_space(12.0);
 
@@ -1694,24 +1687,25 @@ impl DashboardApp {
     }
 
     fn demo_resizable(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Draggable split pane with adjustable divider.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Draggable split pane with adjustable divider.").show(ui);
         ui.add_space(12.0);
 
-        egui_shadcn::Resizable::new(self.resizable_fraction).height(150.0).show(
-            ui,
-            &mut self.resizable_fraction,
-            |ui| {
-                egui_shadcn::Card::new().show(ui, |ui| {
-                    ui.label("Left Panel");
-                });
-            },
-            |ui| {
-                egui_shadcn::Card::new().show(ui, |ui| {
-                    ui.label("Right Panel");
-                });
-            },
-        );
+        egui_shadcn::Resizable::new(self.resizable_fraction)
+            .height(150.0)
+            .show(
+                ui,
+                &mut self.resizable_fraction,
+                |ui| {
+                    egui_shadcn::Card::new().show(ui, |ui| {
+                        ui.label("Left Panel");
+                    });
+                },
+                |ui| {
+                    egui_shadcn::Card::new().show(ui, |ui| {
+                        ui.label("Right Panel");
+                    });
+                },
+            );
     }
 
     // ── Navigation ────────────────────────────────────────────────────
@@ -1750,8 +1744,7 @@ impl DashboardApp {
     }
 
     fn demo_navigation_menu(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Horizontal navigation bar with active indicator.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Horizontal navigation bar with active indicator.").show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::NavigationMenu::new(vec![
@@ -1768,26 +1761,20 @@ impl DashboardApp {
         ui.add_space(12.0);
 
         egui_shadcn::Menubar::new().show(ui, |ui| {
+            egui_shadcn::Menubar::menu(ui, "File", &["New", "Open", "Save", "Exit"], |_idx| {});
             egui_shadcn::Menubar::menu(
-                ui, "File",
-                &["New", "Open", "Save", "Exit"],
-                |_idx| {},
-            );
-            egui_shadcn::Menubar::menu(
-                ui, "Edit",
+                ui,
+                "Edit",
                 &["Undo", "Redo", "Cut", "Copy", "Paste"],
                 |_idx| {},
             );
             egui_shadcn::Menubar::menu(
-                ui, "View",
+                ui,
+                "View",
                 &["Zoom In", "Zoom Out", "Full Screen"],
                 |_idx| {},
             );
-            egui_shadcn::Menubar::menu(
-                ui, "Help",
-                &["Documentation", "About"],
-                |_idx| {},
-            );
+            egui_shadcn::Menubar::menu(ui, "Help", &["Documentation", "About"], |_idx| {});
         });
     }
 
@@ -1797,15 +1784,16 @@ impl DashboardApp {
 
         ui.set_min_height(200.0);
         ui.horizontal(|ui| {
-            egui_shadcn::Sidebar::new()
-                .width(180.0)
-                .collapsible()
-                .show(ui, &mut self.sidebar_collapsed, |ui| {
+            egui_shadcn::Sidebar::new().width(180.0).collapsible().show(
+                ui,
+                &mut self.sidebar_collapsed,
+                |ui| {
                     for item in ["Dashboard", "Projects", "Team", "Settings"] {
                         ui.label(item);
                         ui.add_space(4.0);
                     }
-                });
+                },
+            );
 
             egui_shadcn::Card::new().show(ui, |ui| {
                 ui.set_min_width(200.0);
@@ -1826,8 +1814,7 @@ impl DashboardApp {
     }
 
     fn demo_alert_dialog(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Confirmation dialog with cancel/confirm actions.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Confirmation dialog with cancel/confirm actions.").show(ui);
         ui.add_space(12.0);
 
         if egui_shadcn::Button::new("Open Alert Dialog")
@@ -1858,8 +1845,7 @@ impl DashboardApp {
     }
 
     fn demo_popover(&self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Floating content panel anchored to a trigger.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Floating content panel anchored to a trigger.").show(ui);
         ui.add_space(12.0);
 
         let trigger = egui_shadcn::Button::new("Open Popover")
@@ -1910,11 +1896,7 @@ impl DashboardApp {
             )
             .sense(egui::Sense::click()),
         );
-        egui_shadcn::ContextMenu::show(
-            &response,
-            &["Cut", "Copy", "Paste", "Delete"],
-            |_idx| {},
-        );
+        egui_shadcn::ContextMenu::show(&response, &["Cut", "Copy", "Paste", "Delete"], |_idx| {});
     }
 
     fn demo_dropdown_menu(&self, ui: &mut egui::Ui) {
@@ -1984,8 +1966,11 @@ impl DashboardApp {
         ui.horizontal(|ui| {
             if egui_shadcn::Button::new("Default Toast").show(ui).clicked() {
                 let time = ui.ctx().input(|i| i.time);
-                self.toast_state
-                    .add("Event has been created", egui_shadcn::ToastVariant::Default, time);
+                self.toast_state.add(
+                    "Event has been created",
+                    egui_shadcn::ToastVariant::Default,
+                    time,
+                );
             }
             if egui_shadcn::Button::new("Success")
                 .variant(egui_shadcn::ButtonVariant::Outline)
@@ -2047,18 +2032,14 @@ impl DashboardApp {
         ui.add_space(12.0);
 
         let slides = ["Slide 1: Welcome", "Slide 2: Features", "Slide 3: Pricing"];
-        egui_shadcn::Carousel::new(slides.len()).show(
-            ui,
-            &mut self.carousel_idx,
-            |ui, idx| {
-                egui_shadcn::Card::new().show(ui, |ui| {
-                    ui.set_min_height(80.0);
-                    egui_shadcn::Typography::h4(slides[idx]).show(ui);
-                    ui.add_space(4.0);
-                    ui.label(format!("Content for slide {} goes here.", idx + 1));
-                });
-            },
-        );
+        egui_shadcn::Carousel::new(slides.len()).show(ui, &mut self.carousel_idx, |ui, idx| {
+            egui_shadcn::Card::new().show(ui, |ui| {
+                ui.set_min_height(80.0);
+                egui_shadcn::Typography::h4(slides[idx]).show(ui);
+                ui.add_space(4.0);
+                ui.label(format!("Content for slide {} goes here.", idx + 1));
+            });
+        });
     }
 
     fn demo_calendar(&mut self, ui: &mut egui::Ui) {
@@ -2083,8 +2064,7 @@ impl DashboardApp {
     // ── New Inputs ─────────────────────────────────────────────────
 
     fn demo_number_input(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Numeric input with drag, range, prefix/suffix.")
-            .show(ui);
+        egui_shadcn::Typography::muted("Numeric input with drag, range, prefix/suffix.").show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::Typography::small("f64 with range and suffix").show(ui);
@@ -2179,10 +2159,18 @@ impl DashboardApp {
             },
         ])
         .show(ui, &mut self.icon_tabs_idx, |ui, idx| match idx {
-            0 => { ui.label("Home content"); }
-            1 => { ui.label("Settings content"); }
-            2 => { ui.label("Profile content"); }
-            _ => { ui.label("Notifications content"); }
+            0 => {
+                ui.label("Home content");
+            }
+            1 => {
+                ui.label("Settings content");
+            }
+            2 => {
+                ui.label("Profile content");
+            }
+            _ => {
+                ui.label("Notifications content");
+            }
         });
     }
 
@@ -2260,8 +2248,10 @@ impl DashboardApp {
     // ── Form Layout ──────────────────────────────────────────────
 
     fn demo_field_group(&mut self, ui: &mut egui::Ui) {
-        egui_shadcn::Typography::muted("Form layout utilities: FieldGroup, FieldSet, FieldLegend, FieldDescription.")
-            .show(ui);
+        egui_shadcn::Typography::muted(
+            "Form layout utilities: FieldGroup, FieldSet, FieldLegend, FieldDescription.",
+        )
+        .show(ui);
         ui.add_space(12.0);
 
         egui_shadcn::FieldGroup::show(ui, |ui| {

@@ -1,11 +1,7 @@
 //! Show method for ScrollArea — renders a themed scrollable region.
 
 impl super::scroll_area::ScrollArea {
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = egui::CornerRadius::same(theme.radius.round() as u8);
 

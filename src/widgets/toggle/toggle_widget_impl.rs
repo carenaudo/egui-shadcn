@@ -6,13 +6,9 @@ impl egui::Widget for super::toggle::Toggle<'_> {
         let (height, h_padding, font_size) = self.size.metrics();
 
         // Convert WidgetText into a Galley preserving RichText attributes (bold, italic, etc.)
-        let text_galley = self.text.into_galley(
-            ui,
-            None,
-            font_size,
-            egui::TextStyle::Button,
-        );
-
+        let text_galley = self
+            .text
+            .into_galley(ui, None, font_size, egui::TextStyle::Button);
 
         let desired = egui::vec2(text_galley.size().x + h_padding * 2.0, height);
 

@@ -3,11 +3,7 @@
 impl super::context_menu::ContextMenu {
     /// Attaches a context menu to `response`. Shows on right-click.
     /// Calls `on_select(index)` when an item is clicked.
-    pub fn show(
-        response: &egui::Response,
-        items: &[&str],
-        on_select: impl FnOnce(usize),
-    ) {
+    pub fn show(response: &egui::Response, items: &[&str], on_select: impl FnOnce(usize)) {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(&response.ctx);
         let mut selected_idx = None;
 
@@ -41,19 +37,13 @@ impl super::context_menu::ContextMenu {
                 let (rect, r) = ui.allocate_exact_size(desired, egui::Sense::click());
 
                 if r.hovered() {
-                    ui.painter().rect_filled(
-                        rect,
-                        egui::CornerRadius::same(4),
-                        theme.accent,
-                    );
+                    ui.painter()
+                        .rect_filled(rect, egui::CornerRadius::same(4), theme.accent);
                 }
 
                 if ui.is_rect_visible(rect) {
                     ui.painter().galley(
-                        egui::pos2(
-                            rect.min.x + 8.0,
-                            rect.center().y - galley.size().y / 2.0,
-                        ),
+                        egui::pos2(rect.min.x + 8.0, rect.center().y - galley.size().y / 2.0),
                         galley,
                         theme.popover_foreground,
                     );

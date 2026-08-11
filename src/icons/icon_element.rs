@@ -18,12 +18,7 @@ pub enum IconElement {
     },
 
     /// `<line x1 y1 x2 y2>`.
-    Line {
-        x1: f32,
-        y1: f32,
-        x2: f32,
-        y2: f32,
-    },
+    Line { x1: f32, y1: f32, x2: f32, y2: f32 },
 
     /// `<polyline points="...">` — open series of connected line segments.
     Polyline(Vec<(f32, f32)>),
@@ -32,10 +27,5 @@ pub enum IconElement {
     Polygon(Vec<(f32, f32)>),
 
     /// `<ellipse cx cy rx ry>`.
-    Ellipse {
-        cx: f32,
-        cy: f32,
-        rx: f32,
-        ry: f32,
-    },
+    Ellipse { cx: f32, cy: f32, rx: f32, ry: f32 },
 }

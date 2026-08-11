@@ -91,15 +91,24 @@ fn is_command(ch: char) -> bool {
     matches!(
         ch,
         'M' | 'm'
-            | 'L' | 'l'
-            | 'H' | 'h'
-            | 'V' | 'v'
-            | 'C' | 'c'
-            | 'S' | 's'
-            | 'Q' | 'q'
-            | 'T' | 't'
-            | 'A' | 'a'
-            | 'Z' | 'z'
+            | 'L'
+            | 'l'
+            | 'H'
+            | 'h'
+            | 'V'
+            | 'v'
+            | 'C'
+            | 'c'
+            | 'S'
+            | 's'
+            | 'Q'
+            | 'q'
+            | 'T'
+            | 't'
+            | 'A'
+            | 'a'
+            | 'Z'
+            | 'z'
     )
 }
 
@@ -248,20 +257,14 @@ fn parse_one_command(
             let y1 = take_number(tokens, 1)?;
             let x = take_number(tokens, 2)?;
             let y = take_number(tokens, 3)?;
-            Some((
-                super::path_command::PathCommand::QuadAbs(x1, y1, x, y),
-                4,
-            ))
+            Some((super::path_command::PathCommand::QuadAbs(x1, y1, x, y), 4))
         }
         'q' => {
             let x1 = take_number(tokens, 0)?;
             let y1 = take_number(tokens, 1)?;
             let x = take_number(tokens, 2)?;
             let y = take_number(tokens, 3)?;
-            Some((
-                super::path_command::PathCommand::QuadRel(x1, y1, x, y),
-                4,
-            ))
+            Some((super::path_command::PathCommand::QuadRel(x1, y1, x, y), 4))
         }
         'T' => {
             let x = take_number(tokens, 0)?;

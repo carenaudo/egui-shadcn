@@ -36,10 +36,8 @@ impl super::resizable::Resizable {
             ui.allocate_ui(egui::vec2(left_width, panel_height), left);
 
             // Handle
-            let (handle_rect, handle_response) = ui.allocate_exact_size(
-                egui::vec2(handle_width, panel_height),
-                egui::Sense::drag(),
-            );
+            let (handle_rect, handle_response) =
+                ui.allocate_exact_size(egui::vec2(handle_width, panel_height), egui::Sense::drag());
 
             if handle_response.dragged() {
                 let delta = handle_response.drag_delta().x;
@@ -61,11 +59,7 @@ impl super::resizable::Resizable {
                 let center = handle_rect.center();
                 let dot_color = theme.muted_foreground;
                 for dy in [-8.0_f32, 0.0, 8.0] {
-                    painter.circle_filled(
-                        egui::pos2(center.x, center.y + dy),
-                        1.5,
-                        dot_color,
-                    );
+                    painter.circle_filled(egui::pos2(center.x, center.y + dy), 1.5, dot_color);
                 }
             }
 
