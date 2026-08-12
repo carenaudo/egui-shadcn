@@ -80,3 +80,84 @@ All themes include explicit doc-comments and contribution attribution for upstre
 - **Interactive Component Sandbox**: Displays buttons, badges, alerts, inputs, checkboxes, switches, radio groups, sliders, progress bars, and tabs.
 - **Cargo Target**: Registered as `[[example]] name = "theme_gallery"` in `Cargo.toml`.
 - **Executable**: Compiled to `target/release/examples/theme_gallery.exe`.
+
+---
+
+## 4. `set_shadcn_theme` Only Partially Themed egui (bug, fixed in this fork)
+
+### Symptom
+
+Found while building a consuming app's theme selector: switching between a light shadcn palette
+and a dark one visibly changed shadcn widgets (`Card`, `Button`, `Badge`, …) but left `DragValue`,
+`TextEdit`, scrollbars, `egui::Grid` row striping, `egui_plot` charts, and any panel without an
+explicit `.frame()` painted in whatever `egui::Theme` the *operating system* reported
+(`ThemePreference::System` is egui's default). Two themes visibly stacked in one window — worst when
+the shadcn palette and the OS theme disagreed (a light palette on a dark-mode desktop, or vice versa),
+where roughly half the UI read as legible and the other half as a mismatched grey box.
+
+### Root cause (`src/theme/shadcn_theme_ext.rs`)
+
+`set_shadcn_theme`'s previous body:
+
+```rust
+fn set_shadcn_theme(&self, theme: ShadcnTheme) {
+    self.all_styles_mut(|style| {
+        style.visuals.window_fill = theme.popover;
+        style.visuals.window_stroke = egui::Stroke::new(1.0, theme.border);
+        style.visuals.window_shadow = egui::Shadow { /* ... */ };
+    });
+    self.data_mut(|d| d.insert_temp::<ShadcnTheme>(egui::Id::NULL, theme));
+}
+```
+
+`egui::Visuals` has dozens of fields beyond `window_*` — `panel_fill`, `override_text_color`,
+`faint_bg_color`, `extreme_bg_color`, `code_bg_color`, `warn_fg_color`/`error_fg_color`,
+`selection`, `text_cursor`, and the five `widgets.{noninteractive,inactive,hovered,active,open}`
+`WidgetVisuals` that drive every stock interactive widget's background/stroke/text color. None of
+those were ever touched, so they stayed at whatever `egui::Visuals::dark()`/`::light()` produces for
+the OS-reported theme — independent of, and frequently in conflict with, the shadcn palette actually
+requested.
+
+### Fix
+
+Added `visuals_from(&ShadcnTheme) -> egui::Visuals` (same file), which starts from
+`Visuals::dark()`/`::light()` and overrides the full set above from the theme's own tokens:
+
+| `Visuals` field | Source `ShadcnTheme` field(s) |
+|---|---|
+| `panel_fill` | `background` |
+| `override_text_color` | `Some(foreground)` |
+| `hyperlink_color` | `primary` |
+| `faint_bg_color`, `code_bg_color` | `muted` |
+| `extreme_bg_color` | `input` |
+| `warn_fg_color` | `destructive.gamma_multiply(0.75)` |
+| `error_fg_color` | `destructive` |
+| `window_fill` / `window_stroke` | `popover` / `border` (unchanged from before) |
+| `selection.bg_fill` / `.stroke` | `primary.gamma_multiply(0.4)` / `ring` |
+| `text_cursor.stroke.color` | `foreground` |
+| `widgets.noninteractive` | `card` bg, `border` stroke, `muted_foreground` text |
+| `widgets.inactive` / `open` | `secondary` bg, `border` stroke, `secondary_foreground` text |
+| `widgets.hovered` | `accent` bg, `ring` stroke, `accent_foreground` text |
+| `widgets.active` | `primary` bg, `ring` stroke, `primary_foreground` text |
+| every `widgets.*.corner_radius` | `radius` |
+
+`set_shadcn_theme` now calls `visuals_from` and assigns the result to `style.visuals` wholesale
+(still inside the existing `all_styles_mut`, so both of egui's internal dark/light `Style`s get the
+same shadcn-derived visuals — matching this function's pre-existing behavior of making the theme
+uniform regardless of which `egui::Theme` the host reports).
+
+**No signature change.** "Dark" is inferred from `background`'s relative luminance
+(`0.2126*r + 0.7152*g + 0.0722*b < 0.5`) rather than threaded through as a new `dark: bool`
+parameter, so every existing call site — all 20 theme constructors, every consumer already calling
+`ctx.set_shadcn_theme(theme)` — keeps compiling and behaving correctly with zero changes.
+
+### Tests added (`shadcn_theme_ext.rs`)
+
+- `dark_and_light_backgrounds_are_classified_correctly` — sanity check on the two Nova defaults.
+- `every_bundled_theme_background_is_classified_as_expected` — table-driven, all 20 constructors
+  (10 families × dark/light), asserting the luminance classifier agrees with each constructor's own
+  name.
+- `visuals_from_dark_theme_uses_theme_colors_not_egui_defaults` — asserts `panel_fill`,
+  `override_text_color`, `extreme_bg_color`, `faint_bg_color`, and `widgets.active.bg_fill` all equal
+  the source theme's tokens rather than `Visuals::dark()`'s hardcoded defaults — the direct
+  regression test for the bug this fixes.

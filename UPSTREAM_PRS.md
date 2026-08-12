@@ -57,6 +57,37 @@ Verified present verbatim at `fa5ceee`.
 src/widgets/resizable/resizable_show.rs
 ```
 
+## PR 7 — `set_shadcn_theme` only themes shadcn widgets, not egui itself
+
+**Kind:** bug · **Size:** 1 file, ~90 lines (+3 tests) · **egui version:** independent
+
+`set_shadcn_theme` (`src/theme/shadcn_theme_ext.rs`) overrides exactly three `Visuals` fields —
+`window_fill`, `window_stroke`, `window_shadow` — and stops there. Every other `Visuals` field that
+drives a *stock* egui widget (`panel_fill`, `override_text_color`, `faint_bg_color`,
+`extreme_bg_color`, `code_bg_color`, `warn_fg_color`/`error_fg_color`, `selection`, `text_cursor`,
+and all five `widgets.{noninteractive,inactive,hovered,active,open}`) is left at whatever
+`Visuals::dark()`/`::light()` produces for the OS-reported `egui::Theme`
+(`ThemePreference::System` is egui's default). Concretely: `DragValue`, `TextEdit`, scrollbars,
+`egui::Grid` row striping, and any panel without an explicit `.frame()` never pick up the shadcn
+palette at all — only `Card`/`Button`/`Badge`/etc. (the widgets that read `ShadcnTheme` directly via
+`ctx.shadcn_theme()`) do. A consuming app ends up with two themes visibly stacked in one window,
+worst when the chosen shadcn palette and the OS theme disagree.
+
+Added a `visuals_from(&ShadcnTheme) -> egui::Visuals` that derives the full `Visuals` from the
+theme's own tokens (mapping table in `egui_shadcn_vendored_delta.md` §4) and assigns it wholesale in
+`set_shadcn_theme`, in place of the three-field partial override. "Dark" is inferred from
+`background`'s relative luminance rather than added as a new parameter, so this is **not a breaking
+change** — every existing call site keeps compiling and working. Three new tests cover the luminance
+classifier against all 20 bundled theme constructors and assert the derived `Visuals` actually reads
+from the theme rather than from egui's hardcoded defaults.
+
+Verified present verbatim at `fa5ceee` — the partial override predates this fork's own egui 0.35/0.36
+migration (that migration only changed *how* `all_styles_mut` is called, per PR 5, not *what* it sets).
+
+```
+src/theme/shadcn_theme_ext.rs
+```
+
 ## PR 3 — `paint_icon`: characterization tests, then `Pos2`/`TSTransform` params
 
 **Kind:** quality · **Size:** 1 file, +324 / −115 · **egui version:** independent

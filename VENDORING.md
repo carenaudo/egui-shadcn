@@ -46,6 +46,23 @@ was removed rather than ported — it was already stale and unused.
   - Replaced raw string extraction with `self.text.into_galley(...)` to preserve `RichText` font formatting (`.strong()`, `.italics()`, custom font sizes).
 - **Font Registration (`src/theme/setup_fonts.rs`)**:
   - Registered `Geist-Bold.ttf` under `FontFamily::Name("bold")` in `FontDefinitions`.
+- **`ShadcnThemeExt::set_shadcn_theme` only themed shadcn widgets (`src/theme/shadcn_theme_ext.rs`)**:
+  - It previously overrode exactly three `Visuals` fields — `window_fill`, `window_stroke`,
+    `window_shadow` — leaving `panel_fill`, `override_text_color`, `faint_bg_color`,
+    `extreme_bg_color`, `code_bg_color`, `warn_fg_color`/`error_fg_color`, `selection`, and every
+    `widgets.*` (`noninteractive`/`inactive`/`hovered`/`active`/`open`) at egui's own
+    `Visuals::dark()`/`::light()` defaults for whatever `egui::Theme` the OS/host reports. Result:
+    `Card`, `Button`, etc. painted the shadcn palette while `DragValue`, `TextEdit`, scrollbars,
+    `egui::Grid` striping, `egui_plot`, and any un-`.frame()`d panel painted egui's own defaults —
+    two themes stacked in the same window, worst on a light shadcn palette against a dark-mode OS
+    (or vice versa).
+  - Added a `visuals_from(&ShadcnTheme) -> egui::Visuals` that derives and applies a full `Visuals`
+    from the theme's own tokens, called from `set_shadcn_theme`. "Dark" is inferred from
+    `background`'s relative luminance rather than threaded through as a new parameter, so every
+    existing call site (including all 20 theme constructors and every consumer) keeps working
+    unmodified. Covered by three new tests in `shadcn_theme_ext.rs` (luminance classification for
+    all 20 bundled themes, and that the derived `Visuals` actually reads from the theme rather than
+    from egui's defaults).
 
 ---
 
