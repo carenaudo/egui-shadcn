@@ -30,14 +30,9 @@ impl super::popover::Popover {
                 color: egui::Color32::from_black_alpha(8),
             });
 
-        let popup = egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            trigger_response,
-            ui.layer_id(),
-        )
-        .open_memory(toggle_cmd)
-        .frame(themed_frame);
+        let popup = egui::Popup::new(popup_id, ui.ctx().clone(), trigger_response, ui.layer_id())
+            .open_memory(toggle_cmd)
+            .frame(themed_frame);
 
         popup.show(|ui: &mut egui::Ui| {
             ui.set_min_width(200.0);

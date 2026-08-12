@@ -11,36 +11,156 @@ struct ChartPoint {
 }
 
 const CHART_DATA: &[ChartPoint] = &[
-    ChartPoint { date: "Jun 1", desktop: 178.0, mobile: 200.0 },
-    ChartPoint { date: "Jun 2", desktop: 470.0, mobile: 410.0 },
-    ChartPoint { date: "Jun 3", desktop: 103.0, mobile: 160.0 },
-    ChartPoint { date: "Jun 4", desktop: 439.0, mobile: 380.0 },
-    ChartPoint { date: "Jun 5", desktop: 88.0, mobile: 140.0 },
-    ChartPoint { date: "Jun 6", desktop: 294.0, mobile: 250.0 },
-    ChartPoint { date: "Jun 7", desktop: 323.0, mobile: 370.0 },
-    ChartPoint { date: "Jun 8", desktop: 385.0, mobile: 320.0 },
-    ChartPoint { date: "Jun 9", desktop: 438.0, mobile: 480.0 },
-    ChartPoint { date: "Jun 10", desktop: 155.0, mobile: 200.0 },
-    ChartPoint { date: "Jun 11", desktop: 92.0, mobile: 150.0 },
-    ChartPoint { date: "Jun 12", desktop: 492.0, mobile: 420.0 },
-    ChartPoint { date: "Jun 13", desktop: 81.0, mobile: 130.0 },
-    ChartPoint { date: "Jun 14", desktop: 426.0, mobile: 380.0 },
-    ChartPoint { date: "Jun 15", desktop: 307.0, mobile: 350.0 },
-    ChartPoint { date: "Jun 16", desktop: 371.0, mobile: 310.0 },
-    ChartPoint { date: "Jun 17", desktop: 475.0, mobile: 520.0 },
-    ChartPoint { date: "Jun 18", desktop: 107.0, mobile: 170.0 },
-    ChartPoint { date: "Jun 19", desktop: 341.0, mobile: 290.0 },
-    ChartPoint { date: "Jun 20", desktop: 408.0, mobile: 450.0 },
-    ChartPoint { date: "Jun 21", desktop: 169.0, mobile: 210.0 },
-    ChartPoint { date: "Jun 22", desktop: 317.0, mobile: 270.0 },
-    ChartPoint { date: "Jun 23", desktop: 480.0, mobile: 530.0 },
-    ChartPoint { date: "Jun 24", desktop: 132.0, mobile: 180.0 },
-    ChartPoint { date: "Jun 25", desktop: 141.0, mobile: 190.0 },
-    ChartPoint { date: "Jun 26", desktop: 434.0, mobile: 380.0 },
-    ChartPoint { date: "Jun 27", desktop: 448.0, mobile: 490.0 },
-    ChartPoint { date: "Jun 28", desktop: 149.0, mobile: 200.0 },
-    ChartPoint { date: "Jun 29", desktop: 103.0, mobile: 160.0 },
-    ChartPoint { date: "Jun 30", desktop: 446.0, mobile: 400.0 },
+    ChartPoint {
+        date: "Jun 1",
+        desktop: 178.0,
+        mobile: 200.0,
+    },
+    ChartPoint {
+        date: "Jun 2",
+        desktop: 470.0,
+        mobile: 410.0,
+    },
+    ChartPoint {
+        date: "Jun 3",
+        desktop: 103.0,
+        mobile: 160.0,
+    },
+    ChartPoint {
+        date: "Jun 4",
+        desktop: 439.0,
+        mobile: 380.0,
+    },
+    ChartPoint {
+        date: "Jun 5",
+        desktop: 88.0,
+        mobile: 140.0,
+    },
+    ChartPoint {
+        date: "Jun 6",
+        desktop: 294.0,
+        mobile: 250.0,
+    },
+    ChartPoint {
+        date: "Jun 7",
+        desktop: 323.0,
+        mobile: 370.0,
+    },
+    ChartPoint {
+        date: "Jun 8",
+        desktop: 385.0,
+        mobile: 320.0,
+    },
+    ChartPoint {
+        date: "Jun 9",
+        desktop: 438.0,
+        mobile: 480.0,
+    },
+    ChartPoint {
+        date: "Jun 10",
+        desktop: 155.0,
+        mobile: 200.0,
+    },
+    ChartPoint {
+        date: "Jun 11",
+        desktop: 92.0,
+        mobile: 150.0,
+    },
+    ChartPoint {
+        date: "Jun 12",
+        desktop: 492.0,
+        mobile: 420.0,
+    },
+    ChartPoint {
+        date: "Jun 13",
+        desktop: 81.0,
+        mobile: 130.0,
+    },
+    ChartPoint {
+        date: "Jun 14",
+        desktop: 426.0,
+        mobile: 380.0,
+    },
+    ChartPoint {
+        date: "Jun 15",
+        desktop: 307.0,
+        mobile: 350.0,
+    },
+    ChartPoint {
+        date: "Jun 16",
+        desktop: 371.0,
+        mobile: 310.0,
+    },
+    ChartPoint {
+        date: "Jun 17",
+        desktop: 475.0,
+        mobile: 520.0,
+    },
+    ChartPoint {
+        date: "Jun 18",
+        desktop: 107.0,
+        mobile: 170.0,
+    },
+    ChartPoint {
+        date: "Jun 19",
+        desktop: 341.0,
+        mobile: 290.0,
+    },
+    ChartPoint {
+        date: "Jun 20",
+        desktop: 408.0,
+        mobile: 450.0,
+    },
+    ChartPoint {
+        date: "Jun 21",
+        desktop: 169.0,
+        mobile: 210.0,
+    },
+    ChartPoint {
+        date: "Jun 22",
+        desktop: 317.0,
+        mobile: 270.0,
+    },
+    ChartPoint {
+        date: "Jun 23",
+        desktop: 480.0,
+        mobile: 530.0,
+    },
+    ChartPoint {
+        date: "Jun 24",
+        desktop: 132.0,
+        mobile: 180.0,
+    },
+    ChartPoint {
+        date: "Jun 25",
+        desktop: 141.0,
+        mobile: 190.0,
+    },
+    ChartPoint {
+        date: "Jun 26",
+        desktop: 434.0,
+        mobile: 380.0,
+    },
+    ChartPoint {
+        date: "Jun 27",
+        desktop: 448.0,
+        mobile: 490.0,
+    },
+    ChartPoint {
+        date: "Jun 28",
+        desktop: 149.0,
+        mobile: 200.0,
+    },
+    ChartPoint {
+        date: "Jun 29",
+        desktop: 103.0,
+        mobile: 160.0,
+    },
+    ChartPoint {
+        date: "Jun 30",
+        desktop: 446.0,
+        mobile: 400.0,
+    },
 ];
 
 // ---------------------------------------------------------------------------
@@ -57,26 +177,166 @@ struct TableRow {
 }
 
 const TABLE_DATA: &[TableRow] = &[
-    TableRow { header: "Cover page", section_type: "Cover page", status: "In Process", target: "18", limit: "5", reviewer: "Eddie Lake" },
-    TableRow { header: "Table of contents", section_type: "Table of contents", status: "Done", target: "29", limit: "24", reviewer: "Eddie Lake" },
-    TableRow { header: "Executive summary", section_type: "Narrative", status: "Done", target: "10", limit: "13", reviewer: "Eddie Lake" },
-    TableRow { header: "Technical approach", section_type: "Narrative", status: "Done", target: "27", limit: "23", reviewer: "Jamik Tashpulatov" },
-    TableRow { header: "Design", section_type: "Narrative", status: "In Process", target: "2", limit: "16", reviewer: "Jamik Tashpulatov" },
-    TableRow { header: "Capabilities", section_type: "Narrative", status: "In Process", target: "20", limit: "8", reviewer: "Jamik Tashpulatov" },
-    TableRow { header: "Integration with existing systems", section_type: "Narrative", status: "In Process", target: "19", limit: "21", reviewer: "Jamik Tashpulatov" },
-    TableRow { header: "Innovation and Advantages", section_type: "Narrative", status: "Done", target: "25", limit: "26", reviewer: "Assign reviewer" },
-    TableRow { header: "Overview of EMR's Innovative Solutions", section_type: "Technical content", status: "Done", target: "7", limit: "23", reviewer: "Assign reviewer" },
-    TableRow { header: "Advanced Algorithms and Machine Learning", section_type: "Narrative", status: "Done", target: "30", limit: "28", reviewer: "Assign reviewer" },
-    TableRow { header: "Adaptive Communication Protocols", section_type: "Narrative", status: "Done", target: "9", limit: "31", reviewer: "Assign reviewer" },
-    TableRow { header: "Advantages Over Current Technologies", section_type: "Narrative", status: "Done", target: "12", limit: "0", reviewer: "Assign reviewer" },
-    TableRow { header: "Past Performance", section_type: "Narrative", status: "Done", target: "22", limit: "33", reviewer: "Assign reviewer" },
-    TableRow { header: "Customer Feedback and Satisfaction Levels", section_type: "Narrative", status: "Done", target: "15", limit: "34", reviewer: "Assign reviewer" },
-    TableRow { header: "Implementation Challenges and Solutions", section_type: "Narrative", status: "Done", target: "3", limit: "35", reviewer: "Assign reviewer" },
-    TableRow { header: "Security Measures and Data Protection", section_type: "Narrative", status: "In Process", target: "6", limit: "36", reviewer: "Assign reviewer" },
-    TableRow { header: "Scalability and Future Proofing", section_type: "Narrative", status: "Done", target: "4", limit: "37", reviewer: "Assign reviewer" },
-    TableRow { header: "Cost-Benefit Analysis", section_type: "Plain language", status: "Done", target: "14", limit: "38", reviewer: "Assign reviewer" },
-    TableRow { header: "User Training and Onboarding Experience", section_type: "Narrative", status: "Done", target: "17", limit: "39", reviewer: "Assign reviewer" },
-    TableRow { header: "Future Development Roadmap", section_type: "Narrative", status: "Done", target: "11", limit: "40", reviewer: "Assign reviewer" },
+    TableRow {
+        header: "Cover page",
+        section_type: "Cover page",
+        status: "In Process",
+        target: "18",
+        limit: "5",
+        reviewer: "Eddie Lake",
+    },
+    TableRow {
+        header: "Table of contents",
+        section_type: "Table of contents",
+        status: "Done",
+        target: "29",
+        limit: "24",
+        reviewer: "Eddie Lake",
+    },
+    TableRow {
+        header: "Executive summary",
+        section_type: "Narrative",
+        status: "Done",
+        target: "10",
+        limit: "13",
+        reviewer: "Eddie Lake",
+    },
+    TableRow {
+        header: "Technical approach",
+        section_type: "Narrative",
+        status: "Done",
+        target: "27",
+        limit: "23",
+        reviewer: "Jamik Tashpulatov",
+    },
+    TableRow {
+        header: "Design",
+        section_type: "Narrative",
+        status: "In Process",
+        target: "2",
+        limit: "16",
+        reviewer: "Jamik Tashpulatov",
+    },
+    TableRow {
+        header: "Capabilities",
+        section_type: "Narrative",
+        status: "In Process",
+        target: "20",
+        limit: "8",
+        reviewer: "Jamik Tashpulatov",
+    },
+    TableRow {
+        header: "Integration with existing systems",
+        section_type: "Narrative",
+        status: "In Process",
+        target: "19",
+        limit: "21",
+        reviewer: "Jamik Tashpulatov",
+    },
+    TableRow {
+        header: "Innovation and Advantages",
+        section_type: "Narrative",
+        status: "Done",
+        target: "25",
+        limit: "26",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Overview of EMR's Innovative Solutions",
+        section_type: "Technical content",
+        status: "Done",
+        target: "7",
+        limit: "23",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Advanced Algorithms and Machine Learning",
+        section_type: "Narrative",
+        status: "Done",
+        target: "30",
+        limit: "28",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Adaptive Communication Protocols",
+        section_type: "Narrative",
+        status: "Done",
+        target: "9",
+        limit: "31",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Advantages Over Current Technologies",
+        section_type: "Narrative",
+        status: "Done",
+        target: "12",
+        limit: "0",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Past Performance",
+        section_type: "Narrative",
+        status: "Done",
+        target: "22",
+        limit: "33",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Customer Feedback and Satisfaction Levels",
+        section_type: "Narrative",
+        status: "Done",
+        target: "15",
+        limit: "34",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Implementation Challenges and Solutions",
+        section_type: "Narrative",
+        status: "Done",
+        target: "3",
+        limit: "35",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Security Measures and Data Protection",
+        section_type: "Narrative",
+        status: "In Process",
+        target: "6",
+        limit: "36",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Scalability and Future Proofing",
+        section_type: "Narrative",
+        status: "Done",
+        target: "4",
+        limit: "37",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Cost-Benefit Analysis",
+        section_type: "Plain language",
+        status: "Done",
+        target: "14",
+        limit: "38",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "User Training and Onboarding Experience",
+        section_type: "Narrative",
+        status: "Done",
+        target: "17",
+        limit: "39",
+        reviewer: "Assign reviewer",
+    },
+    TableRow {
+        header: "Future Development Roadmap",
+        section_type: "Narrative",
+        status: "Done",
+        target: "11",
+        limit: "40",
+        reviewer: "Assign reviewer",
+    },
 ];
 
 const ROWS_PER_PAGE: usize = 10;
@@ -105,23 +365,56 @@ struct NavItem {
 }
 
 const NAV_MAIN: &[NavItem] = &[
-    NavItem { label: "Dashboard", icon: egui_shadcn::LucideIcon::LayoutDashboard },
-    NavItem { label: "Lifecycle", icon: egui_shadcn::LucideIcon::ListTree },
-    NavItem { label: "Analytics", icon: egui_shadcn::LucideIcon::ChartBar },
-    NavItem { label: "Projects", icon: egui_shadcn::LucideIcon::Folder },
-    NavItem { label: "Team", icon: egui_shadcn::LucideIcon::Users },
+    NavItem {
+        label: "Dashboard",
+        icon: egui_shadcn::LucideIcon::LayoutDashboard,
+    },
+    NavItem {
+        label: "Lifecycle",
+        icon: egui_shadcn::LucideIcon::ListTree,
+    },
+    NavItem {
+        label: "Analytics",
+        icon: egui_shadcn::LucideIcon::ChartBar,
+    },
+    NavItem {
+        label: "Projects",
+        icon: egui_shadcn::LucideIcon::Folder,
+    },
+    NavItem {
+        label: "Team",
+        icon: egui_shadcn::LucideIcon::Users,
+    },
 ];
 
 const NAV_DOCS: &[NavItem] = &[
-    NavItem { label: "Data Library", icon: egui_shadcn::LucideIcon::Database },
-    NavItem { label: "Reports", icon: egui_shadcn::LucideIcon::FileText },
-    NavItem { label: "Word Assistant", icon: egui_shadcn::LucideIcon::FileText },
+    NavItem {
+        label: "Data Library",
+        icon: egui_shadcn::LucideIcon::Database,
+    },
+    NavItem {
+        label: "Reports",
+        icon: egui_shadcn::LucideIcon::FileText,
+    },
+    NavItem {
+        label: "Word Assistant",
+        icon: egui_shadcn::LucideIcon::FileText,
+    },
 ];
 
 const NAV_SECONDARY: &[NavItem] = &[
-    NavItem { label: "Settings", icon: egui_shadcn::LucideIcon::Settings },
-    NavItem { label: "Get Help", icon: egui_shadcn::LucideIcon::LifeBuoy },
-    NavItem { label: "Search", icon: egui_shadcn::LucideIcon::Search },
+    NavItem {
+        label: "Settings",
+        icon: egui_shadcn::LucideIcon::Settings,
+    },
+    NavItem {
+        label: "Get Help",
+        icon: egui_shadcn::LucideIcon::LifeBuoy,
+    },
+    NavItem {
+        label: "Search",
+        icon: egui_shadcn::LucideIcon::Search,
+    },
 ];
 
 // ---------------------------------------------------------------------------
@@ -291,11 +584,7 @@ impl DashboardApp {
                 if ui.is_rect_visible(more_rect) {
                     let painter = ui.painter();
                     if more_resp.hovered() {
-                        painter.rect_filled(
-                            more_rect,
-                            egui::CornerRadius::same(6),
-                            theme.accent,
-                        );
+                        painter.rect_filled(more_rect, egui::CornerRadius::same(6), theme.accent);
                     }
                     painter.text(
                         egui::pos2(more_rect.min.x + 32.0, more_rect.center().y),
@@ -352,8 +641,7 @@ impl DashboardApp {
                     egui::pos2(toggle_rect.max.x - 48.0, toggle_rect.center().y - 10.0),
                     egui::vec2(40.0, 20.0),
                 );
-                let mut child_ui =
-                    ui.new_child(egui::UiBuilder::new().max_rect(switch_rect));
+                let mut child_ui = ui.new_child(egui::UiBuilder::new().max_rect(switch_rect));
                 child_ui.add(egui_shadcn::Switch::new(&mut self.dark_mode));
 
                 ui.add_space(8.0);
@@ -391,10 +679,8 @@ impl DashboardApp {
     ) -> egui::Response {
         let width = ui.available_width();
         let height = 32.0;
-        let (rect, response) = ui.allocate_exact_size(
-            egui::vec2(width, height),
-            egui::Sense::click(),
-        );
+        let (rect, response) =
+            ui.allocate_exact_size(egui::vec2(width, height), egui::Sense::click());
 
         if ui.is_rect_visible(rect) {
             let painter = ui.painter();
@@ -424,12 +710,20 @@ impl DashboardApp {
                 painter,
                 icon_rect,
                 &item.icon,
-                if active { theme.accent_foreground } else { theme.muted_foreground },
+                if active {
+                    theme.accent_foreground
+                } else {
+                    theme.muted_foreground
+                },
             );
 
             // Label
             if !self.sidebar_collapsed {
-                let fg = if active { theme.accent_foreground } else { theme.foreground };
+                let fg = if active {
+                    theme.accent_foreground
+                } else {
+                    theme.foreground
+                };
                 painter.text(
                     egui::pos2(rect.min.x + 32.0, rect.center().y),
                     egui::Align2::LEFT_CENTER,
@@ -474,10 +768,8 @@ impl DashboardApp {
 
                     // Separator
                     f.ui(|ui| {
-                        let (rect, _) = ui.allocate_exact_size(
-                            egui::vec2(1.0, 16.0),
-                            egui::Sense::hover(),
-                        );
+                        let (rect, _) =
+                            ui.allocate_exact_size(egui::vec2(1.0, 16.0), egui::Sense::hover());
                         if ui.is_rect_visible(rect) {
                             ui.painter().vline(
                                 rect.center().x,
@@ -609,8 +901,14 @@ impl DashboardApp {
             let desktop_vals: Vec<f32> = data.iter().map(|p| p.desktop).collect();
 
             egui_shadcn::AreaChart::new(labels)
-                .series(egui_shadcn::AreaSeries { values: mobile_vals, color: theme.primary })
-                .series(egui_shadcn::AreaSeries { values: desktop_vals, color: theme.primary })
+                .series(egui_shadcn::AreaSeries {
+                    values: mobile_vals,
+                    color: theme.primary,
+                })
+                .series(egui_shadcn::AreaSeries {
+                    values: desktop_vals,
+                    color: theme.primary,
+                })
                 .stacked()
                 .height(250.0)
                 .show(ui);
@@ -752,50 +1050,42 @@ impl DashboardApp {
                         );
                         ui.add_space(8.0);
 
-                        if egui_shadcn::Button::icon_only(
-                            egui_shadcn::LucideIcon::ChevronsLeft,
-                        )
-                        .variant(egui_shadcn::ButtonVariant::Outline)
-                        .size(egui_shadcn::ComponentSize::Sm)
-                        .enabled(self.table_page > 0)
-                        .show(ui)
-                        .clicked()
+                        if egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ChevronsLeft)
+                            .variant(egui_shadcn::ButtonVariant::Outline)
+                            .size(egui_shadcn::ComponentSize::Sm)
+                            .enabled(self.table_page > 0)
+                            .show(ui)
+                            .clicked()
                         {
                             self.table_page = 0;
                         }
 
-                        if egui_shadcn::Button::icon_only(
-                            egui_shadcn::LucideIcon::ChevronLeft,
-                        )
-                        .variant(egui_shadcn::ButtonVariant::Outline)
-                        .size(egui_shadcn::ComponentSize::Sm)
-                        .enabled(self.table_page > 0)
-                        .show(ui)
-                        .clicked()
+                        if egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ChevronLeft)
+                            .variant(egui_shadcn::ButtonVariant::Outline)
+                            .size(egui_shadcn::ComponentSize::Sm)
+                            .enabled(self.table_page > 0)
+                            .show(ui)
+                            .clicked()
                         {
                             self.table_page = self.table_page.saturating_sub(1);
                         }
 
-                        if egui_shadcn::Button::icon_only(
-                            egui_shadcn::LucideIcon::ChevronRight,
-                        )
-                        .variant(egui_shadcn::ButtonVariant::Outline)
-                        .size(egui_shadcn::ComponentSize::Sm)
-                        .enabled(self.table_page + 1 < total_pages)
-                        .show(ui)
-                        .clicked()
+                        if egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ChevronRight)
+                            .variant(egui_shadcn::ButtonVariant::Outline)
+                            .size(egui_shadcn::ComponentSize::Sm)
+                            .enabled(self.table_page + 1 < total_pages)
+                            .show(ui)
+                            .clicked()
                         {
                             self.table_page += 1;
                         }
 
-                        if egui_shadcn::Button::icon_only(
-                            egui_shadcn::LucideIcon::ChevronsRight,
-                        )
-                        .variant(egui_shadcn::ButtonVariant::Outline)
-                        .size(egui_shadcn::ComponentSize::Sm)
-                        .enabled(self.table_page + 1 < total_pages)
-                        .show(ui)
-                        .clicked()
+                        if egui_shadcn::Button::icon_only(egui_shadcn::LucideIcon::ChevronsRight)
+                            .variant(egui_shadcn::ButtonVariant::Outline)
+                            .size(egui_shadcn::ComponentSize::Sm)
+                            .enabled(self.table_page + 1 < total_pages)
+                            .show(ui)
+                            .clicked()
                         {
                             self.table_page = total_pages.saturating_sub(1);
                         }
@@ -809,11 +1099,7 @@ impl DashboardApp {
 // Standalone drawing functions
 // ---------------------------------------------------------------------------
 
-fn draw_stat_card(
-    ui: &mut egui::Ui,
-    theme: &egui_shadcn::ShadcnTheme,
-    stat: &StatCard,
-) {
+fn draw_stat_card(ui: &mut egui::Ui, theme: &egui_shadcn::ShadcnTheme, stat: &StatCard) {
     egui_shadcn::Card::new().show(ui, |ui| {
         // Header row: description + badge
         egui_shadcn::Flex::row()
@@ -882,10 +1168,8 @@ fn draw_stat_card(
                 egui_shadcn::LucideIcon::TrendingDown
             };
             let icon_size = 14.0;
-            let (icon_rect, _) = ui.allocate_exact_size(
-                egui::vec2(icon_size, icon_size),
-                egui::Sense::hover(),
-            );
+            let (icon_rect, _) =
+                ui.allocate_exact_size(egui::vec2(icon_size, icon_size), egui::Sense::hover());
             if ui.is_rect_visible(icon_rect) {
                 egui_shadcn::icons::paint_icon::paint_icon(
                     ui.painter(),
@@ -903,7 +1187,6 @@ fn draw_stat_card(
         );
     });
 }
-
 
 // ---------------------------------------------------------------------------
 // main

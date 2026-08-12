@@ -13,11 +13,7 @@ pub fn resolve_switch_style(
 
     // In dark mode the off-track (input at 15% white) is very faint.
     // Add a border to define the track shape, matching shadcn's shadow-xs.
-    let track_border = if !on {
-        Some(theme.border)
-    } else {
-        None
-    };
+    let track_border = if !on { Some(theme.border) } else { None };
 
     let thumb_color = crate::paint::interpolate_color::interpolate_color(
         theme.foreground,

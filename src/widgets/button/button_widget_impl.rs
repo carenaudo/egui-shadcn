@@ -5,8 +5,7 @@ impl egui::Widget for super::button::Button<'_> {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
         // Check if inside a ButtonGroup and claim an index
-        let group_key =
-            crate::widgets::button_group::button_group::ButtonGroup::context_key();
+        let group_key = crate::widgets::button_group::button_group::ButtonGroup::context_key();
         let group_info = ui.ctx().data_mut(|d| {
             d.get_temp::<crate::widgets::button_group::button_group_context::ButtonGroupContext>(
                 group_key,
@@ -76,7 +75,12 @@ impl egui::Widget for super::button::Button<'_> {
         let content_width = if is_icon_only {
             style.height
         } else if has_icon && has_text {
-            style.h_padding + icon_size + icon_gap + text_galley.size().x + shortcut_width + style.h_padding
+            style.h_padding
+                + icon_size
+                + icon_gap
+                + text_galley.size().x
+                + shortcut_width
+                + style.h_padding
         } else {
             text_galley.size().x + shortcut_width + style.h_padding * 2.0
         };
@@ -140,9 +144,7 @@ impl egui::Widget for super::button::Button<'_> {
             painter.rect_filled(rect, cr, style.bg);
 
             // Border (skip when inside a button group — the group draws borders)
-            if !in_group
-                && let Some(border_color) = style.border
-            {
+            if !in_group && let Some(border_color) = style.border {
                 painter.rect_stroke(
                     rect,
                     cr,

@@ -26,9 +26,12 @@ pub fn resolve_button_style(
             );
             (tint, theme.destructive, None, false)
         }
-        crate::tokens::button_variant::ButtonVariant::Outline => {
-            (theme.background, theme.foreground, Some(theme.border), false)
-        }
+        crate::tokens::button_variant::ButtonVariant::Outline => (
+            theme.background,
+            theme.foreground,
+            Some(theme.border),
+            false,
+        ),
         crate::tokens::button_variant::ButtonVariant::Secondary => {
             (theme.secondary, theme.secondary_foreground, None, false)
         }

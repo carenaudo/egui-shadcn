@@ -2,11 +2,7 @@
 
 impl super::accordion::Accordion {
     /// Shows the accordion. `open_indices` tracks which sections are expanded.
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        open_indices: &mut Vec<usize>,
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, open_indices: &mut Vec<usize>) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
         ui.vertical(|ui| {
@@ -27,47 +23,44 @@ impl super::accordion::Accordion {
                 // Section header
                 ui.add_space(12.0);
                 let header_response = ui.horizontal(|ui| {
-                    ui.with_layout(
-                        egui::Layout::left_to_right(egui::Align::Center),
-                        |ui| {
-                            let trigger = ui.add(
-                                egui::Label::new(
-                                    egui::RichText::new(title)
-                                        .color(theme.foreground)
-                                        .size(14.0)
-                                        .strong(),
-                                )
-                                .sense(egui::Sense::click()),
+                    ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                        let trigger = ui.add(
+                            egui::Label::new(
+                                egui::RichText::new(title)
+                                    .color(theme.foreground)
+                                    .size(14.0)
+                                    .strong(),
+                            )
+                            .sense(egui::Sense::click()),
+                        );
+
+                        // Expand to fill width then add chevron on right
+                        let icon_size: f32 = 14.0;
+                        let remaining = ui.available_width() - icon_size - 4.0;
+                        if remaining > 0.0 {
+                            ui.add_space(remaining);
+                        }
+
+                        let chevron_icon = if is_open {
+                            crate::icons::lucide_icon::LucideIcon::Minus
+                        } else {
+                            crate::icons::lucide_icon::LucideIcon::Plus
+                        };
+                        let (icon_rect, _) = ui.allocate_exact_size(
+                            egui::vec2(icon_size, icon_size),
+                            egui::Sense::hover(),
+                        );
+                        if ui.is_rect_visible(icon_rect) {
+                            crate::icons::paint_icon::paint_icon(
+                                ui.painter(),
+                                icon_rect,
+                                &chevron_icon,
+                                theme.muted_foreground,
                             );
+                        }
 
-                            // Expand to fill width then add chevron on right
-                            let icon_size: f32 = 14.0;
-                            let remaining = ui.available_width() - icon_size - 4.0;
-                            if remaining > 0.0 {
-                                ui.add_space(remaining);
-                            }
-
-                            let chevron_icon = if is_open {
-                                crate::icons::lucide_icon::LucideIcon::Minus
-                            } else {
-                                crate::icons::lucide_icon::LucideIcon::Plus
-                            };
-                            let (icon_rect, _) = ui.allocate_exact_size(
-                                egui::vec2(icon_size, icon_size),
-                                egui::Sense::hover(),
-                            );
-                            if ui.is_rect_visible(icon_rect) {
-                                crate::icons::paint_icon::paint_icon(
-                                    ui.painter(),
-                                    icon_rect,
-                                    &chevron_icon,
-                                    theme.muted_foreground,
-                                );
-                            }
-
-                            trigger
-                        },
-                    )
+                        trigger
+                    })
                     .inner
                 });
 
@@ -86,8 +79,7 @@ impl super::accordion::Accordion {
                 }
 
                 if trigger.hovered() {
-                    ui.ctx()
-                        .set_cursor_icon(egui::CursorIcon::PointingHand);
+                    ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
                 }
 
                 // Content

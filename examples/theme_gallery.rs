@@ -6,7 +6,6 @@ use egui_shadcn::{
     ToggleVariant, Typography,
 };
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum SelectedPalette {
     Default,
@@ -63,24 +62,52 @@ impl SelectedPalette {
         match (self, dark) {
             (SelectedPalette::Default, false) => egui_shadcn::theme::shadcn_theme_light::light(),
             (SelectedPalette::Default, true) => egui_shadcn::theme::shadcn_theme_dark::dark(),
-            (SelectedPalette::Violet, false) => egui_shadcn::theme::shadcn_theme_violet::violet_light(),
-            (SelectedPalette::Violet, true) => egui_shadcn::theme::shadcn_theme_violet::violet_dark(),
+            (SelectedPalette::Violet, false) => {
+                egui_shadcn::theme::shadcn_theme_violet::violet_light()
+            }
+            (SelectedPalette::Violet, true) => {
+                egui_shadcn::theme::shadcn_theme_violet::violet_dark()
+            }
             (SelectedPalette::Sky, false) => egui_shadcn::theme::shadcn_theme_sky::sky_light(),
             (SelectedPalette::Sky, true) => egui_shadcn::theme::shadcn_theme_sky::sky_dark(),
-            (SelectedPalette::Obsidian, false) => egui_shadcn::theme::shadcn_theme_obsidian::obsidian_light(),
-            (SelectedPalette::Obsidian, true) => egui_shadcn::theme::shadcn_theme_obsidian::obsidian_dark(),
+            (SelectedPalette::Obsidian, false) => {
+                egui_shadcn::theme::shadcn_theme_obsidian::obsidian_light()
+            }
+            (SelectedPalette::Obsidian, true) => {
+                egui_shadcn::theme::shadcn_theme_obsidian::obsidian_dark()
+            }
             (SelectedPalette::Pink, false) => egui_shadcn::theme::shadcn_theme_pink::pink_light(),
             (SelectedPalette::Pink, true) => egui_shadcn::theme::shadcn_theme_pink::pink_dark(),
-            (SelectedPalette::Terracotta, false) => egui_shadcn::theme::shadcn_theme_terracotta::terracotta_light(),
-            (SelectedPalette::Terracotta, true) => egui_shadcn::theme::shadcn_theme_terracotta::terracotta_dark(),
-            (SelectedPalette::Rainbow, false) => egui_shadcn::theme::shadcn_theme_rainbow::rainbow_light(),
-            (SelectedPalette::Rainbow, true) => egui_shadcn::theme::shadcn_theme_rainbow::rainbow_dark(),
-            (SelectedPalette::Heatmap, false) => egui_shadcn::theme::shadcn_theme_heatmap::heatmap_light(),
-            (SelectedPalette::Heatmap, true) => egui_shadcn::theme::shadcn_theme_heatmap::heatmap_dark(),
-            (SelectedPalette::CyberAurora, false) => egui_shadcn::theme::shadcn_theme_cyber_aurora::cyber_aurora_light(),
-            (SelectedPalette::CyberAurora, true) => egui_shadcn::theme::shadcn_theme_cyber_aurora::cyber_aurora_dark(),
-            (SelectedPalette::Nostalgia, false) => egui_shadcn::theme::shadcn_theme_nostalgia::nostalgia_light(),
-            (SelectedPalette::Nostalgia, true) => egui_shadcn::theme::shadcn_theme_nostalgia::nostalgia_dark(),
+            (SelectedPalette::Terracotta, false) => {
+                egui_shadcn::theme::shadcn_theme_terracotta::terracotta_light()
+            }
+            (SelectedPalette::Terracotta, true) => {
+                egui_shadcn::theme::shadcn_theme_terracotta::terracotta_dark()
+            }
+            (SelectedPalette::Rainbow, false) => {
+                egui_shadcn::theme::shadcn_theme_rainbow::rainbow_light()
+            }
+            (SelectedPalette::Rainbow, true) => {
+                egui_shadcn::theme::shadcn_theme_rainbow::rainbow_dark()
+            }
+            (SelectedPalette::Heatmap, false) => {
+                egui_shadcn::theme::shadcn_theme_heatmap::heatmap_light()
+            }
+            (SelectedPalette::Heatmap, true) => {
+                egui_shadcn::theme::shadcn_theme_heatmap::heatmap_dark()
+            }
+            (SelectedPalette::CyberAurora, false) => {
+                egui_shadcn::theme::shadcn_theme_cyber_aurora::cyber_aurora_light()
+            }
+            (SelectedPalette::CyberAurora, true) => {
+                egui_shadcn::theme::shadcn_theme_cyber_aurora::cyber_aurora_dark()
+            }
+            (SelectedPalette::Nostalgia, false) => {
+                egui_shadcn::theme::shadcn_theme_nostalgia::nostalgia_light()
+            }
+            (SelectedPalette::Nostalgia, true) => {
+                egui_shadcn::theme::shadcn_theme_nostalgia::nostalgia_dark()
+            }
         }
     }
 }
@@ -167,7 +194,6 @@ impl ThemeGalleryApp {
                         .width(260.0),
                 );
 
-
                 ui.label(egui::RichText::new("Theme Palette: ").color(theme.muted_foreground));
             });
         });
@@ -183,7 +209,11 @@ impl ThemeGalleryApp {
             Typography::muted(format!(
                 "Currently inspecting {} ({}) — Radius: {:.1}px",
                 self.selected_palette.name(),
-                if self.dark_mode { "Dark Mode" } else { "Light Mode" },
+                if self.dark_mode {
+                    "Dark Mode"
+                } else {
+                    "Light Mode"
+                },
                 theme.radius
             ))
             .show(ui);
@@ -207,10 +237,8 @@ impl ThemeGalleryApp {
             ui.horizontal_wrapped(|ui| {
                 for (label, color) in tokens {
                     ui.vertical(|ui| {
-                        let (rect, _) = ui.allocate_exact_size(
-                            egui::vec2(72.0, 36.0),
-                            egui::Sense::hover(),
-                        );
+                        let (rect, _) =
+                            ui.allocate_exact_size(egui::vec2(72.0, 36.0), egui::Sense::hover());
                         ui.painter().rect(
                             rect,
                             theme.radius.min(6.0),
@@ -239,7 +267,11 @@ impl ThemeGalleryApp {
 
                 // Buttons
                 Card::new().show(ui, |ui| {
-                    ui.heading(egui::RichText::new("Button Variants & Sizes").size(15.0).color(theme.foreground));
+                    ui.heading(
+                        egui::RichText::new("Button Variants & Sizes")
+                            .size(15.0)
+                            .color(theme.foreground),
+                    );
                     ui.add_space(8.0);
 
                     ui.horizontal_wrapped(|ui| {
@@ -253,23 +285,15 @@ impl ThemeGalleryApp {
                         Button::new("Destructive")
                             .variant(ButtonVariant::Destructive)
                             .show(ui);
-                        Button::new("Ghost")
-                            .variant(ButtonVariant::Ghost)
-                            .show(ui);
-                        Button::new("Link")
-                            .variant(ButtonVariant::Link)
-                            .show(ui);
+                        Button::new("Ghost").variant(ButtonVariant::Ghost).show(ui);
+                        Button::new("Link").variant(ButtonVariant::Link).show(ui);
                     });
 
                     ui.add_space(12.0);
                     ui.horizontal(|ui| {
-                        Button::new("Small")
-                            .size(ComponentSize::Sm)
-                            .show(ui);
+                        Button::new("Small").size(ComponentSize::Sm).show(ui);
                         Button::new("Default").show(ui);
-                        Button::new("Large")
-                            .size(ComponentSize::Lg)
-                            .show(ui);
+                        Button::new("Large").size(ComponentSize::Lg).show(ui);
                     });
                 });
 
@@ -277,7 +301,11 @@ impl ThemeGalleryApp {
 
                 // Badges & Alerts
                 Card::new().show(ui, |ui| {
-                    ui.heading(egui::RichText::new("Badges & Alerts").size(15.0).color(theme.foreground));
+                    ui.heading(
+                        egui::RichText::new("Badges & Alerts")
+                            .size(15.0)
+                            .color(theme.foreground),
+                    );
                     ui.add_space(8.0);
 
                     ui.horizontal(|ui| {
@@ -294,11 +322,9 @@ impl ThemeGalleryApp {
                     });
 
                     ui.add_space(12.0);
-                    Alert::new()
-                        .title("Theme Activated")
-                        .show(ui, |ui| {
-                            ui.label(format!("Showing palette {}", self.selected_palette.name()));
-                        });
+                    Alert::new().title("Theme Activated").show(ui, |ui| {
+                        ui.label(format!("Showing palette {}", self.selected_palette.name()));
+                    });
 
                     ui.add_space(8.0);
                     Alert::new()
@@ -318,7 +344,11 @@ impl ThemeGalleryApp {
 
                 // Form Inputs & Controls
                 Card::new().show(ui, |ui| {
-                    ui.heading(egui::RichText::new("Form Controls & Inputs").size(15.0).color(theme.foreground));
+                    ui.heading(
+                        egui::RichText::new("Form Controls & Inputs")
+                            .size(15.0)
+                            .color(theme.foreground),
+                    );
                     ui.add_space(8.0);
 
                     ui.add(Input::new(&mut self.input_text).placeholder("Enter text..."));
@@ -357,8 +387,6 @@ impl ThemeGalleryApp {
                             )
                             .variant(ToggleVariant::Outline),
                         );
-
-
                     });
                 });
 
@@ -366,7 +394,11 @@ impl ThemeGalleryApp {
 
                 // Sliders & Progress & Tabs
                 Card::new().show(ui, |ui| {
-                    ui.heading(egui::RichText::new("Sliders, Progress & Tabs").size(15.0).color(theme.foreground));
+                    ui.heading(
+                        egui::RichText::new("Sliders, Progress & Tabs")
+                            .size(15.0)
+                            .color(theme.foreground),
+                    );
                     ui.add_space(8.0);
 
                     ui.add(Slider::new(&mut self.slider_val, 0.0..=100.0));
@@ -374,7 +406,11 @@ impl ThemeGalleryApp {
 
                     ui.add_space(12.0);
                     ui.add(Progress::new(self.progress_val));
-                    Typography::muted(format!("Progress status: {:.0}%", self.progress_val * 100.0)).show(ui);
+                    Typography::muted(format!(
+                        "Progress status: {:.0}%",
+                        self.progress_val * 100.0
+                    ))
+                    .show(ui);
 
                     ui.add_space(16.0);
                     Tabs::new(vec![
@@ -415,4 +451,3 @@ fn main() -> eframe::Result {
         }),
     )
 }
-

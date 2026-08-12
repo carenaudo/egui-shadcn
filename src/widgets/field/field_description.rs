@@ -14,7 +14,8 @@ impl FieldDescription {
         );
         let (rect, _) = ui.allocate_exact_size(galley.size(), egui::Sense::hover());
         if ui.is_rect_visible(rect) {
-            ui.painter().galley(rect.min, galley, theme.muted_foreground);
+            ui.painter()
+                .galley(rect.min, galley, theme.muted_foreground);
         }
     }
 }

@@ -2,11 +2,7 @@
 
 impl super::item::Item {
     /// Renders the item container with content.
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let cr = theme.radius.round() as u8;
 
@@ -17,9 +13,9 @@ impl super::item::Item {
 
         let frame = egui::Frame::NONE
             .inner_margin(egui::Margin {
-                left: 12,  // px-3
+                left: 12, // px-3
                 right: 12,
-                top: 10,   // py-2.5
+                top: 10, // py-2.5
                 bottom: 10,
             })
             .corner_radius(egui::CornerRadius::same(cr))

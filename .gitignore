@@ -4,5 +4,3 @@ Cargo.lock
 .idea/
 .claude/
 .DS_Store
-web/target/
-web/dist/

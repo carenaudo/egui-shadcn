@@ -10,9 +10,17 @@ pub fn resolve_checkbox_style(
     let (box_bg, box_border, check_color) = if checked {
         (theme.primary, theme.primary, theme.primary_foreground)
     } else if hovered {
-        (egui::Color32::TRANSPARENT, theme.ring, egui::Color32::TRANSPARENT)
+        (
+            egui::Color32::TRANSPARENT,
+            theme.ring,
+            egui::Color32::TRANSPARENT,
+        )
     } else {
-        (egui::Color32::TRANSPARENT, theme.border, egui::Color32::TRANSPARENT)
+        (
+            egui::Color32::TRANSPARENT,
+            theme.border,
+            egui::Color32::TRANSPARENT,
+        )
     };
 
     super::resolved_checkbox_style::ResolvedCheckboxStyle {

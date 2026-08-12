@@ -2,11 +2,7 @@
 
 impl super::card::Card {
     /// Renders the card container and calls `content` inside it.
-    pub fn show(
-        self,
-        ui: &mut egui::Ui,
-        content: impl FnOnce(&mut egui::Ui),
-    ) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui, content: impl FnOnce(&mut egui::Ui)) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
         let ring_color = egui::Color32::from_rgba_unmultiplied(

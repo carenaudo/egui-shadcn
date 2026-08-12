@@ -17,12 +17,7 @@ struct NavState {
 impl super::command::Command {
     /// Shows the command palette when `open` is true.
     /// `search` holds the filter text. Returns the index of selected command if any.
-    pub fn show(
-        self,
-        ctx: &egui::Context,
-        open: &mut bool,
-        search: &mut String,
-    ) -> Option<usize> {
+    pub fn show(self, ctx: &egui::Context, open: &mut bool, search: &mut String) -> Option<usize> {
         if !*open {
             return None;
         }
@@ -32,10 +27,8 @@ impl super::command::Command {
 
         // Backdrop
         let screen = ctx.input(|i| i.viewport_rect());
-        let backdrop_layer = egui::LayerId::new(
-            egui::Order::Middle,
-            egui::Id::new("command_backdrop"),
-        );
+        let backdrop_layer =
+            egui::LayerId::new(egui::Order::Middle, egui::Id::new("command_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -47,8 +40,7 @@ impl super::command::Command {
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
-                let (_, response) =
-                    ui.allocate_exact_size(screen.size(), egui::Sense::click());
+                let (_, response) = ui.allocate_exact_size(screen.size(), egui::Sense::click());
                 response
             });
 
@@ -104,10 +96,18 @@ impl super::command::Command {
                 // Wrapping: a palette is a short list, and stopping dead at
                 // the ends makes reaching the bottom entry needlessly slow.
                 if input.consume_key(egui::Modifiers::NONE, egui::Key::ArrowDown) {
-                    nav.active = if nav.active >= last { 0 } else { nav.active + 1 };
+                    nav.active = if nav.active >= last {
+                        0
+                    } else {
+                        nav.active + 1
+                    };
                 }
                 if input.consume_key(egui::Modifiers::NONE, egui::Key::ArrowUp) {
-                    nav.active = if nav.active == 0 { last } else { nav.active - 1 };
+                    nav.active = if nav.active == 0 {
+                        last
+                    } else {
+                        nav.active - 1
+                    };
                 }
                 if input.consume_key(egui::Modifiers::NONE, egui::Key::Home) {
                     nav.active = 0;
@@ -163,11 +163,10 @@ impl super::command::Command {
                     });
 
                     input_frame.show(ui, |ui| {
-                        let input_resp =
-                            crate::widgets::input::input::Input::new(search)
-                                .placeholder(&self.placeholder)
-                                .desired_width(ui.available_width())
-                                .show(ui);
+                        let input_resp = crate::widgets::input::input::Input::new(search)
+                            .placeholder(&self.placeholder)
+                            .desired_width(ui.available_width())
+                            .show(ui);
                         input_resp.request_focus();
                     });
 
@@ -181,8 +180,7 @@ impl super::command::Command {
                     ui.add_space(1.0);
 
                     // Command list
-                    let results_frame =
-                        egui::Frame::NONE.inner_margin(egui::Margin::same(8));
+                    let results_frame = egui::Frame::NONE.inner_margin(egui::Margin::same(8));
 
                     results_frame.show(ui, |ui| {
                         let mut current_group = String::new();
@@ -192,74 +190,72 @@ impl super::command::Command {
                         // the viewport; the active row is scrolled into view
                         // below, which is what makes arrowing past the fold work.
                         egui::ScrollArea::vertical()
-                        .max_height(320.0)
-                        .show(ui, |ui| {
-                        for (idx, (group, label)) in self.items.iter().enumerate() {
-                            if !visible.contains(&idx) {
-                                continue;
-                            }
+                            .max_height(320.0)
+                            .show(ui, |ui| {
+                                for (idx, (group, label)) in self.items.iter().enumerate() {
+                                    if !visible.contains(&idx) {
+                                        continue;
+                                    }
 
-                            any_shown = true;
+                                    any_shown = true;
 
-                            if *group != current_group {
-                                if !current_group.is_empty() {
-                                    ui.add_space(4.0);
+                                    if *group != current_group {
+                                        if !current_group.is_empty() {
+                                            ui.add_space(4.0);
+                                        }
+                                        ui.label(
+                                            egui::RichText::new(group)
+                                                .color(theme.muted_foreground)
+                                                .size(12.0)
+                                                .strong(),
+                                        );
+                                        ui.add_space(2.0);
+                                        current_group = group.clone();
+                                    }
+
+                                    let galley = ui.painter().layout_no_wrap(
+                                        label.clone(),
+                                        egui::FontId::proportional(14.0),
+                                        theme.popover_foreground,
+                                    );
+                                    let desired =
+                                        egui::vec2(ui.available_width(), galley.size().y + 8.0);
+                                    let (rect, r) =
+                                        ui.allocate_exact_size(desired, egui::Sense::click());
+
+                                    // Keyboard and mouse share one highlight, so the
+                                    // row Enter would run always looks selected.
+                                    let is_active = active_item == Some(idx);
+                                    if r.hovered() || is_active {
+                                        ui.painter().rect_filled(
+                                            rect,
+                                            egui::CornerRadius::same(4),
+                                            theme.accent,
+                                        );
+                                    }
+                                    if is_active {
+                                        ui.scroll_to_rect(rect, None);
+                                    }
+
+                                    if ui.is_rect_visible(rect) {
+                                        ui.painter().galley(
+                                            egui::pos2(
+                                                rect.min.x + 8.0,
+                                                rect.center().y - galley.size().y / 2.0,
+                                            ),
+                                            galley,
+                                            theme.popover_foreground,
+                                        );
+                                    }
+
+                                    if r.clicked() {
+                                        selected = Some(idx);
+                                        *open = false;
+                                        search.clear();
+                                        ctx.request_repaint();
+                                    }
                                 }
-                                ui.label(
-                                    egui::RichText::new(group)
-                                        .color(theme.muted_foreground)
-                                        .size(12.0)
-                                        .strong(),
-                                );
-                                ui.add_space(2.0);
-                                current_group = group.clone();
-                            }
-
-                            let galley = ui.painter().layout_no_wrap(
-                                label.clone(),
-                                egui::FontId::proportional(14.0),
-                                theme.popover_foreground,
-                            );
-                            let desired = egui::vec2(
-                                ui.available_width(),
-                                galley.size().y + 8.0,
-                            );
-                            let (rect, r) =
-                                ui.allocate_exact_size(desired, egui::Sense::click());
-
-                            // Keyboard and mouse share one highlight, so the
-                            // row Enter would run always looks selected.
-                            let is_active = active_item == Some(idx);
-                            if r.hovered() || is_active {
-                                ui.painter().rect_filled(
-                                    rect,
-                                    egui::CornerRadius::same(4),
-                                    theme.accent,
-                                );
-                            }
-                            if is_active {
-                                ui.scroll_to_rect(rect, None);
-                            }
-
-                            if ui.is_rect_visible(rect) {
-                                ui.painter().galley(
-                                    egui::pos2(
-                                        rect.min.x + 8.0,
-                                        rect.center().y - galley.size().y / 2.0,
-                                    ),
-                                    galley,
-                                    theme.popover_foreground,
-                                );
-                            }
-
-                            if r.clicked() {
-                                selected = Some(idx);
-                                *open = false;
-                                search.clear();
-                                ctx.request_repaint();
-                            }
-                        }
-                        });
+                            });
 
                         if !any_shown {
                             ui.label(
@@ -318,13 +314,18 @@ mod tests {
 
         for pressed in keys {
             let input = pressed.map_or_else(egui::RawInput::default, key);
-            let _ = ctx.run_ui(input, |ui| {
-                let got = super::super::command::Command::new(items())
-                    .show(ui.ctx(), &mut open, search);
+            // egui 0.36 debug_asserts on drop if a FullOutput's texture
+            // deltas were never applied; this harness never paints, so clear
+            // rather than apply them.
+            ctx.run_ui(input, |ui| {
+                let got =
+                    super::super::command::Command::new(items()).show(ui.ctx(), &mut open, search);
                 if got.is_some() {
                     picked = got;
                 }
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         picked
@@ -356,7 +357,10 @@ mod tests {
     fn selection_wraps_at_both_ends() {
         let mut search = String::new();
         assert_eq!(
-            drive(&mut search, &[None, Some(egui::Key::ArrowUp), Some(egui::Key::Enter)]),
+            drive(
+                &mut search,
+                &[None, Some(egui::Key::ArrowUp), Some(egui::Key::Enter)]
+            ),
             Some(3),
         );
 
@@ -379,7 +383,10 @@ mod tests {
     fn home_and_end_jump_to_the_edges() {
         let mut search = String::new();
         assert_eq!(
-            drive(&mut search, &[None, Some(egui::Key::End), Some(egui::Key::Enter)]),
+            drive(
+                &mut search,
+                &[None, Some(egui::Key::End), Some(egui::Key::Enter)]
+            ),
             Some(3),
         );
 
@@ -422,21 +429,28 @@ mod tests {
             key(egui::Key::ArrowDown),
             key(egui::Key::ArrowDown),
         ] {
-            let _ = ctx.run_ui(input, |ui| {
+            ctx.run_ui(input, |ui| {
                 super::super::command::Command::new(items()).show(ui.ctx(), &mut open, &mut search);
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         // …then narrow the list and hit Enter.
         search.push_str("run");
         for input in [egui::RawInput::default(), key(egui::Key::Enter)] {
-            let _ = ctx.run_ui(input, |ui| {
-                let got = super::super::command::Command::new(items())
-                    .show(ui.ctx(), &mut open, &mut search);
+            ctx.run_ui(input, |ui| {
+                let got = super::super::command::Command::new(items()).show(
+                    ui.ctx(),
+                    &mut open,
+                    &mut search,
+                );
                 if got.is_some() {
                     picked = got;
                 }
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         // "Playtest Debug" is the first Run entry, not the third overall.
@@ -451,11 +465,16 @@ mod tests {
         let mut search = String::new();
 
         for input in [egui::RawInput::default(), key(egui::Key::Escape)] {
-            let _ = ctx.run_ui(input, |ui| {
-                let got = super::super::command::Command::new(items())
-                    .show(ui.ctx(), &mut open, &mut search);
+            ctx.run_ui(input, |ui| {
+                let got = super::super::command::Command::new(items()).show(
+                    ui.ctx(),
+                    &mut open,
+                    &mut search,
+                );
                 assert!(got.is_none());
-            });
+            })
+            .textures_delta
+            .clear();
         }
 
         assert!(!open);

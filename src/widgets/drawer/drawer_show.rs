@@ -1,12 +1,7 @@
 //! Show method for Drawer — renders a bottom slide-up panel with animation.
 
 impl super::drawer::Drawer {
-    pub fn show(
-        self,
-        ctx: &egui::Context,
-        open: &mut bool,
-        content: impl FnOnce(&mut egui::Ui),
-    ) {
+    pub fn show(self, ctx: &egui::Context, open: &mut bool, content: impl FnOnce(&mut egui::Ui)) {
         let anim_id = egui::Id::new("drawer_anim");
         let anim_t = ctx.animate_bool_with_time(anim_id, *open, 0.2);
 
@@ -20,10 +15,8 @@ impl super::drawer::Drawer {
 
         // Animated backdrop
         let backdrop_alpha = (60.0 * ease_t) as u8;
-        let backdrop_layer = egui::LayerId::new(
-            egui::Order::Middle,
-            egui::Id::new("drawer_backdrop"),
-        );
+        let backdrop_layer =
+            egui::LayerId::new(egui::Order::Middle, egui::Id::new("drawer_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -35,8 +28,7 @@ impl super::drawer::Drawer {
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
-                let (_, response) =
-                    ui.allocate_exact_size(screen.size(), egui::Sense::click());
+                let (_, response) = ui.allocate_exact_size(screen.size(), egui::Sense::click());
                 response
             });
 
@@ -50,10 +42,7 @@ impl super::drawer::Drawer {
 
         egui::Area::new(egui::Id::new("drawer_panel"))
             .order(egui::Order::Foreground)
-            .anchor(
-                egui::Align2::CENTER_BOTTOM,
-                egui::vec2(0.0, slide_offset_y),
-            )
+            .anchor(egui::Align2::CENTER_BOTTOM, egui::vec2(0.0, slide_offset_y))
             .show(ctx, |ui| {
                 let frame = egui::Frame::NONE
                     .fill(theme.background)
@@ -93,8 +82,7 @@ impl super::drawer::Drawer {
 
                     // Track cumulative drag; close when dragged down past threshold
                     let drag_id = egui::Id::new("drawer_drag_delta");
-                    let mut cumulative: f32 =
-                        ctx.data(|d| d.get_temp(drag_id).unwrap_or(0.0_f32));
+                    let mut cumulative: f32 = ctx.data(|d| d.get_temp(drag_id).unwrap_or(0.0_f32));
                     if handle_resp.dragged() {
                         cumulative += handle_resp.drag_delta().y;
                         ctx.data_mut(|d| d.insert_temp(drag_id, cumulative));
@@ -108,28 +96,25 @@ impl super::drawer::Drawer {
                     }
 
                     // Close button
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::TOP),
-                        |ui| {
-                            let close_size = 16.0;
-                            let (close_rect, close_resp) = ui.allocate_exact_size(
-                                egui::vec2(close_size, close_size),
-                                egui::Sense::click(),
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
+                        let close_size = 16.0;
+                        let (close_rect, close_resp) = ui.allocate_exact_size(
+                            egui::vec2(close_size, close_size),
+                            egui::Sense::click(),
+                        );
+                        if ui.is_rect_visible(close_rect) {
+                            crate::icons::paint_icon::paint_icon(
+                                ui.painter(),
+                                close_rect,
+                                &crate::icons::lucide_icon::LucideIcon::X,
+                                theme.muted_foreground,
                             );
-                            if ui.is_rect_visible(close_rect) {
-                                crate::icons::paint_icon::paint_icon(
-                                    ui.painter(),
-                                    close_rect,
-                                    &crate::icons::lucide_icon::LucideIcon::X,
-                                    theme.muted_foreground,
-                                );
-                            }
-                            if close_resp.clicked() {
-                                *open = false;
-                                ctx.request_repaint();
-                            }
-                        },
-                    );
+                        }
+                        if close_resp.clicked() {
+                            *open = false;
+                            ctx.request_repaint();
+                        }
+                    });
 
                     // Title and description
                     if let Some(title) = self.title {

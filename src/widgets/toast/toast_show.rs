@@ -68,11 +68,10 @@ impl super::toast_state::ToastState {
                                 egui::Layout::right_to_left(egui::Align::Center),
                                 |ui| {
                                     let close_size = 14.0;
-                                    let (close_rect, close_resp) =
-                                        ui.allocate_exact_size(
-                                            egui::vec2(close_size, close_size),
-                                            egui::Sense::click(),
-                                        );
+                                    let (close_rect, close_resp) = ui.allocate_exact_size(
+                                        egui::vec2(close_size, close_size),
+                                        egui::Sense::click(),
+                                    );
                                     if ui.is_rect_visible(close_rect) {
                                         let color = if close_resp.hovered() {
                                             theme.foreground

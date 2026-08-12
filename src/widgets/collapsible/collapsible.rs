@@ -8,6 +8,8 @@ pub struct Collapsible {
 
 impl Collapsible {
     pub fn new(title: impl Into<String>) -> Self {
-        Self { title: title.into() }
+        Self {
+            title: title.into(),
+        }
     }
 }

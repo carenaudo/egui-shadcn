@@ -1,12 +1,7 @@
 //! Show method for Sheet — renders a slide-in panel overlay with animation.
 
 impl super::sheet::Sheet {
-    pub fn show(
-        self,
-        ctx: &egui::Context,
-        open: &mut bool,
-        content: impl FnOnce(&mut egui::Ui),
-    ) {
+    pub fn show(self, ctx: &egui::Context, open: &mut bool, content: impl FnOnce(&mut egui::Ui)) {
         let anim_id = egui::Id::new("sheet_anim");
         let anim_t = ctx.animate_bool_with_time(anim_id, *open, 0.2);
 
@@ -20,10 +15,8 @@ impl super::sheet::Sheet {
 
         // Animated backdrop
         let backdrop_alpha = (60.0 * ease_t) as u8;
-        let backdrop_layer = egui::LayerId::new(
-            egui::Order::Middle,
-            egui::Id::new("sheet_backdrop"),
-        );
+        let backdrop_layer =
+            egui::LayerId::new(egui::Order::Middle, egui::Id::new("sheet_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -35,8 +28,7 @@ impl super::sheet::Sheet {
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
-                let (_, response) =
-                    ui.allocate_exact_size(screen.size(), egui::Sense::click());
+                let (_, response) = ui.allocate_exact_size(screen.size(), egui::Sense::click());
                 response
             });
 
@@ -91,28 +83,25 @@ impl super::sheet::Sheet {
                     }
 
                     // Close button
-                    ui.with_layout(
-                        egui::Layout::right_to_left(egui::Align::TOP),
-                        |ui| {
-                            let close_size = 16.0;
-                            let (close_rect, close_resp) = ui.allocate_exact_size(
-                                egui::vec2(close_size, close_size),
-                                egui::Sense::click(),
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
+                        let close_size = 16.0;
+                        let (close_rect, close_resp) = ui.allocate_exact_size(
+                            egui::vec2(close_size, close_size),
+                            egui::Sense::click(),
+                        );
+                        if ui.is_rect_visible(close_rect) {
+                            crate::icons::paint_icon::paint_icon(
+                                ui.painter(),
+                                close_rect,
+                                &crate::icons::lucide_icon::LucideIcon::X,
+                                theme.muted_foreground,
                             );
-                            if ui.is_rect_visible(close_rect) {
-                                crate::icons::paint_icon::paint_icon(
-                                    ui.painter(),
-                                    close_rect,
-                                    &crate::icons::lucide_icon::LucideIcon::X,
-                                    theme.muted_foreground,
-                                );
-                            }
-                            if close_resp.clicked() {
-                                *open = false;
-                                ctx.request_repaint();
-                            }
-                        },
-                    );
+                        }
+                        if close_resp.clicked() {
+                            *open = false;
+                            ctx.request_repaint();
+                        }
+                    });
 
                     // Title & description
                     if let Some(title) = self.title {

@@ -48,14 +48,10 @@ impl super::calendar::Calendar {
                 }
 
                 ui.label(
-                    egui::RichText::new(format!(
-                        "{} {}",
-                        Self::month_name(*month),
-                        year
-                    ))
-                    .color(theme.foreground)
-                    .size(14.0)
-                    .strong(),
+                    egui::RichText::new(format!("{} {}", Self::month_name(*month), year))
+                        .color(theme.foreground)
+                        .size(14.0)
+                        .strong(),
                 );
 
                 let (next_rect, next_resp) = ui.allocate_exact_size(

@@ -11,10 +11,10 @@ pub fn paint_dashed_rect(
 ) {
     // Approximate with small line segments along each edge.
     let edges: [(egui::Pos2, egui::Pos2); 4] = [
-        (rect.left_top(), rect.right_top()),     // top
-        (rect.right_top(), rect.right_bottom()),  // right
-        (rect.right_bottom(), rect.left_bottom()),// bottom
-        (rect.left_bottom(), rect.left_top()),    // left
+        (rect.left_top(), rect.right_top()),       // top
+        (rect.right_top(), rect.right_bottom()),   // right
+        (rect.right_bottom(), rect.left_bottom()), // bottom
+        (rect.left_bottom(), rect.left_top()),     // left
     ];
 
     let _ = corner_radius; // corner rounding not applied to dash segments

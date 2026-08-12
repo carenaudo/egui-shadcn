@@ -15,7 +15,10 @@ impl Typography {
         }
     }
 
-    pub fn variant(mut self, variant: crate::tokens::typography_variant::TypographyVariant) -> Self {
+    pub fn variant(
+        mut self,
+        variant: crate::tokens::typography_variant::TypographyVariant,
+    ) -> Self {
         self.variant = variant;
         self
     }

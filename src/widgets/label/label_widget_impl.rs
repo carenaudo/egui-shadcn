@@ -17,11 +17,9 @@ impl egui::Widget for super::label::Label {
             None => (14.0, None),
         };
 
-        let galley = ui.painter().layout_no_wrap(
-            self.text,
-            egui::FontId::proportional(font_size),
-            color,
-        );
+        let galley =
+            ui.painter()
+                .layout_no_wrap(self.text, egui::FontId::proportional(font_size), color);
 
         let desired = match fixed_height {
             Some(h) => egui::vec2(galley.size().x, h),
@@ -31,10 +29,7 @@ impl egui::Widget for super::label::Label {
 
         if ui.is_rect_visible(rect) {
             // Center text vertically within the allocated rect (matches button centering)
-            let text_pos = egui::pos2(
-                rect.min.x,
-                rect.center().y - galley.size().y / 2.0,
-            );
+            let text_pos = egui::pos2(rect.min.x, rect.center().y - galley.size().y / 2.0);
             ui.painter().galley(text_pos, galley, color);
         }
 

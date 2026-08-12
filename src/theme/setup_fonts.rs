@@ -46,9 +46,10 @@ pub fn setup_fonts(ctx: &egui::Context) {
         .insert(1, "Geist-Bold".to_owned());
 
     // Register explicit bold font family for strong/bold text
-    fonts
-        .families
-        .insert(egui::FontFamily::Name("bold".into()), vec!["Geist-Bold".to_owned()]);
+    fonts.families.insert(
+        egui::FontFamily::Name("bold".into()),
+        vec!["Geist-Bold".to_owned()],
+    );
 
     ctx.set_fonts(fonts);
 }

@@ -9,11 +9,17 @@ pub struct Separator {
 
 impl Separator {
     pub fn horizontal() -> Self {
-        Self { horizontal: true, text: None }
+        Self {
+            horizontal: true,
+            text: None,
+        }
     }
 
     pub fn vertical() -> Self {
-        Self { horizontal: false, text: None }
+        Self {
+            horizontal: false,
+            text: None,
+        }
     }
 
     /// Adds a centered text label to the separator.
