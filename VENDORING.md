@@ -63,6 +63,29 @@ was removed rather than ported — it was already stale and unused.
     unmodified. Covered by three new tests in `shadcn_theme_ext.rs` (luminance classification for
     all 20 bundled themes, and that the derived `Visuals` actually reads from the theme rather than
     from egui's defaults).
+- **`RichText::strong()` resolved illegible text under saturated palettes (`src/theme/shadcn_theme_ext.rs`)**:
+  - `egui::Visuals::strong_text_color()` — what `.strong()` on any `RichText`/`WidgetText` resolves
+    its color through — is hardcoded upstream to `widgets.active.text_color()`, with no override
+    field (unlike `weak_text_color`, which has one). `visuals_from` set `widgets.active.fg_stroke` to
+    `theme.primary_foreground`, correct for text painted *on* a `primary`-colored surface (a
+    pressed/selected button) but never designed to contrast against `background`/`card`/`popover`,
+    which is where every `.strong()` call in this crate (`Accordion`, `Alert`, `AlertDialog`,
+    `Calendar`, `Command`, `Dialog`, `Drawer`, `Sheet`, `Toast`, `Typography`) and in consuming apps
+    actually paints. Most bundled palettes hid this by luck; Nostalgia's `primary_foreground` (pure
+    white in the light variant, near-black in the dark one) made it unmissable — "strong" headings
+    render almost invisible, backwards between light and dark.
+  - Changed `widgets.active.fg_stroke` to `theme.foreground` — correct against
+    `background`/`card`/`popover` by construction, same as `override_text_color`. `bg_fill`/
+    `weak_bg_fill`/`bg_stroke` stay on `theme.primary`/`theme.ring` (nothing in this crate reads
+    them; kept only for a stock, un-wrapped egui widget). One accepted cost: "strong" text no longer
+    has a color distinct from plain text under this theme — `.strong()` never affected font weight in
+    egui, only color, so there was no boldness to lose.
+  - Covered by two new tests in `shadcn_theme_ext.rs` (`strong_text_is_legible_on_every_surface_it_can_appear_on`,
+    `plain_text_is_legible_on_every_surface_it_can_appear_on`) asserting a WCAG AA contrast ratio
+    (≥4.5:1) between the actual resolved `strong_text_color()`/`override_text_color` and every
+    surface color those texts can be painted on, across all 20 bundled themes — not just the raw
+    token pairs, which wouldn't have caught this (the bug was pairing a token against a surface it
+    was never designed for, not a bad value in isolation).
 
 ---
 

@@ -161,3 +161,82 @@ parameter, so every existing call site — all 20 theme constructors, every cons
   `override_text_color`, `extreme_bg_color`, `faint_bg_color`, and `widgets.active.bg_fill` all equal
   the source theme's tokens rather than `Visuals::dark()`'s hardcoded defaults — the direct
   regression test for the bug this fixes.
+
+## 5. `.strong()` Text Illegible Under Saturated Palettes (bug, fixed in this fork)
+
+### Symptom
+
+Reported on the "Childhood Nostalgia" palette (found while a consuming app added a palette selector
+exposing all 10 families — see §3): headings and other `.strong()`-styled text rendered nearly
+invisible — pale/near-white in the light variant, dark/near-black in the dark variant, i.e. backwards
+from what either variant needs. Reproduced by screenshotting a running consumer app (`PowerShell`
+`System.Drawing` window capture, since there's no click-automation for a native win32 app) with
+`Card` section headers built from plain `egui::RichText::new(title).strong()`.
+
+### Root cause (`src/theme/shadcn_theme_ext.rs`)
+
+`egui::Visuals::strong_text_color()` — what `RichText::strong()` / `WidgetText::strong()` resolve
+their color through — is hardcoded upstream (`egui-0.36.1/src/style.rs`) as:
+
+```rust
+pub fn strong_text_color(&self) -> Color32 {
+    self.widgets.active.text_color()
+}
+```
+
+with **no override field**, unlike `weak_text_color: Option<Color32>`. §4's `visuals_from` set
+`widgets.active`'s `fg_stroke` to `theme.primary_foreground` — correct for text painted *on* a
+`primary`-colored surface (a pressed/selected button), the only place `widgets.active` was
+consciously designed to matter. But `strong_text_color()` is egui's general-purpose "ambient
+emphasis" text helper, used by ten widgets in this crate (`Accordion`, `Alert`, `AlertDialog`,
+`Calendar`, `Command`, `Dialog`, `Drawer`, `Sheet`, `Toast`, `Typography`) and by any consuming app
+that reaches for plain `.strong()` — all painting on `background`/`card`/`popover`, not on
+`theme.primary`. `theme.primary_foreground` was never designed to contrast against those surfaces.
+Most bundled palettes hid this by coincidence (`primary_foreground` values tuned close to shadcn's
+own defaults happen to still read against `background`/`card`); Nostalgia's `primary_foreground` is
+pure white in the light variant and near-black in the dark one, making the mismatch unmissable.
+
+Confirmed via direct inspection of every widget in this crate (`grep -rn "shadcn_theme(ui.ctx())"`):
+none of them read `ui.visuals().widgets.*` for their own coloring — every one re-fetches
+`ShadcnTheme` and paints its primary-colored surfaces directly from `theme.primary`/
+`theme.primary_foreground`. So `widgets.active.fg_stroke` had exactly one live consumer in this
+crate's actual rendering path: `strong_text_color()`.
+
+### Fix
+
+One-line change in `visuals_from`:
+
+```rust
+// before
+visuals.widgets.active = widget_visuals(theme.primary, theme.primary, theme.ring, theme.primary_foreground, radius);
+// after
+visuals.widgets.active = widget_visuals(theme.primary, theme.primary, theme.ring, theme.foreground, radius);
+```
+
+`bg_fill`/`weak_bg_fill`/`bg_stroke` stay on `theme.primary`/`theme.ring` (kept only so a stock,
+un-wrapped egui widget still gets a plausible "pressed" look — nothing in this crate reads them).
+`theme.foreground` is correct against `background`/`card`/`popover` by construction — the same
+guarantee `override_text_color` already relies on. **Accepted cost:** "strong" text no longer has a
+color distinct from plain text under this theme. `.strong()` never changed font weight in egui, only
+color, so there was no boldness being lost — legible-everywhere beats a color distinction that was
+illegible half the time. A genuinely bold heading style should use an explicit `FontId`, not
+`strong_text_color()`.
+
+### Tests added (`shadcn_theme_ext.rs`)
+
+- `contrast_ratio` — new `#[cfg(test)]` helper: proper WCAG contrast ratio (linearized sRGB), distinct
+  from the file's existing `relative_luminance` shortcut (gamma-encoded, only accurate enough for
+  dark/light classification, not contrast).
+- `strong_text_is_legible_on_every_surface_it_can_appear_on` — the direct regression test: asserts
+  `visuals_from(&theme).strong_text_color()` (the actual resolved value, not a raw token) meets WCAG
+  AA (≥4.5:1) against `background`, `card`, and `popover` for all 20 bundled themes. Static token-pair
+  checks wouldn't have caught this bug — `primary`/`primary_foreground` contrast fine against each
+  other; the defect was pairing `primary_foreground` against a surface it was never designed for.
+- `plain_text_is_legible_on_every_surface_it_can_appear_on` — same coverage for
+  `override_text_color`/`theme.foreground`. This path was never broken, but nothing previously caught
+  a hypothetical future palette shipping a `foreground` illegible against its own `card`/`popover`;
+  this closes that gap too.
+- `ALL_THEME_CTORS` — the 20-constructor `(ctor, expected_dark)` table used by
+  `every_bundled_theme_background_is_classified_as_expected` was hoisted out of that test into a
+  module-level `const` so both new tests (and any future one) iterate the same list rather than
+  risking two lists drifting apart as palettes are added.

@@ -59,7 +59,7 @@ src/widgets/resizable/resizable_show.rs
 
 ## PR 7 — `set_shadcn_theme` only themes shadcn widgets, not egui itself
 
-**Kind:** bug · **Size:** 1 file, ~90 lines (+3 tests) · **egui version:** independent
+**Kind:** bug · **Size:** 1 file, ~90 lines (+5 tests) · **egui version:** independent
 
 `set_shadcn_theme` (`src/theme/shadcn_theme_ext.rs`) overrides exactly three `Visuals` fields —
 `window_fill`, `window_stroke`, `window_shadow` — and stops there. Every other `Visuals` field that
@@ -80,6 +80,17 @@ theme's own tokens (mapping table in `egui_shadcn_vendored_delta.md` §4) and as
 change** — every existing call site keeps compiling and working. Three new tests cover the luminance
 classifier against all 20 bundled theme constructors and assert the derived `Visuals` actually reads
 from the theme rather than from egui's hardcoded defaults.
+
+`widgets.active.fg_stroke`'s mapping was refined after the initial version shipped: it started as
+`theme.primary_foreground` (text-on-a-primary-button), which turned out to also be what
+`egui::Visuals::strong_text_color()` reads for *every* `.strong()` call in the crate — a color
+designed to contrast against `theme.primary`, not the `background`/`card`/`popover` those calls
+actually paint on. Changed to `theme.foreground`, which is guaranteed to contrast against `background`/`card`/`popover`
+by construction (see `egui_shadcn_vendored_delta.md` §5 for the full writeup).
+Two more tests assert WCAG-AA contrast for the resolved `strong_text_color()`/`override_text_color`
+against every surface they can appear on, across all 20 themes — the token-pair-only checks above
+wouldn't have caught this, since the bug was pairing a token against a surface it was never designed
+for, not a bad value in isolation.
 
 Verified present verbatim at `fa5ceee` — the partial override predates this fork's own egui 0.35/0.36
 migration (that migration only changed *how* `all_styles_mut` is called, per PR 5, not *what* it sets).
