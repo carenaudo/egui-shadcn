@@ -125,12 +125,36 @@ fn visuals_from(theme: &ShadcnTheme) -> egui::Visuals {
     visuals.text_cursor.stroke.color = theme.foreground;
 
     let radius = egui::CornerRadius::same(theme.radius.round() as u8);
-    visuals.widgets.noninteractive = widget_visuals(theme.card, theme.card, theme.border, theme.muted_foreground, radius);
-    visuals.widgets.inactive = widget_visuals(theme.secondary, theme.secondary, theme.border, theme.secondary_foreground, radius);
-    visuals.widgets.hovered = widget_visuals(theme.accent, theme.accent, theme.ring, theme.accent_foreground, radius);
+    visuals.widgets.noninteractive = widget_visuals(
+        theme.card,
+        theme.card,
+        theme.border,
+        theme.muted_foreground,
+        radius,
+    );
+    visuals.widgets.inactive = widget_visuals(
+        theme.secondary,
+        theme.secondary,
+        theme.border,
+        theme.secondary_foreground,
+        radius,
+    );
+    visuals.widgets.hovered = widget_visuals(
+        theme.accent,
+        theme.accent,
+        theme.ring,
+        theme.accent_foreground,
+        radius,
+    );
     // fg_stroke is `theme.foreground`, not `theme.primary_foreground` — see this
     // function's doc comment (`strong_text_color()` has no override field upstream).
-    visuals.widgets.active = widget_visuals(theme.primary, theme.primary, theme.ring, theme.foreground, radius);
+    visuals.widgets.active = widget_visuals(
+        theme.primary,
+        theme.primary,
+        theme.ring,
+        theme.foreground,
+        radius,
+    );
     visuals.widgets.open = visuals.widgets.inactive;
 
     visuals
@@ -214,13 +238,22 @@ mod tests {
         (super::super::shadcn_theme_pink::pink_dark, true),
         (super::super::shadcn_theme_pink::pink_light, false),
         (super::super::shadcn_theme_terracotta::terracotta_dark, true),
-        (super::super::shadcn_theme_terracotta::terracotta_light, false),
+        (
+            super::super::shadcn_theme_terracotta::terracotta_light,
+            false,
+        ),
         (super::super::shadcn_theme_rainbow::rainbow_dark, true),
         (super::super::shadcn_theme_rainbow::rainbow_light, false),
         (super::super::shadcn_theme_heatmap::heatmap_dark, true),
         (super::super::shadcn_theme_heatmap::heatmap_light, false),
-        (super::super::shadcn_theme_cyber_aurora::cyber_aurora_dark, true),
-        (super::super::shadcn_theme_cyber_aurora::cyber_aurora_light, false),
+        (
+            super::super::shadcn_theme_cyber_aurora::cyber_aurora_dark,
+            true,
+        ),
+        (
+            super::super::shadcn_theme_cyber_aurora::cyber_aurora_light,
+            false,
+        ),
         (super::super::shadcn_theme_nostalgia::nostalgia_dark, true),
         (super::super::shadcn_theme_nostalgia::nostalgia_light, false),
     ];
@@ -231,7 +264,8 @@ mod tests {
             let theme = ctor();
             let is_dark = relative_luminance(theme.background) < 0.5;
             assert_eq!(
-                is_dark, *expected_dark,
+                is_dark,
+                *expected_dark,
                 "background {:?} (luminance {:.3}) misclassified for a {} constructor",
                 theme.background,
                 relative_luminance(theme.background),
