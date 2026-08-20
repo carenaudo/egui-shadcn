@@ -201,7 +201,11 @@ fn contrast_ratio(a: egui::Color32, b: egui::Color32) -> f32 {
     fn linear_luminance(c: egui::Color32) -> f32 {
         let to_linear = |channel: u8| {
             let c = channel as f32 / 255.0;
-            if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
+            if c <= 0.04045 {
+                c / 12.92
+            } else {
+                ((c + 0.055) / 1.055).powf(2.4)
+            }
         };
         0.2126 * to_linear(c.r()) + 0.7152 * to_linear(c.g()) + 0.0722 * to_linear(c.b())
     }
@@ -312,9 +316,11 @@ mod tests {
             let theme = ctor();
             let visuals = visuals_from(&theme);
             let strong = visuals.strong_text_color();
-            for (surface_name, surface) in
-                [("background", theme.background), ("card", theme.card), ("popover", theme.popover)]
-            {
+            for (surface_name, surface) in [
+                ("background", theme.background),
+                ("card", theme.card),
+                ("popover", theme.popover),
+            ] {
                 let ratio = contrast_ratio(strong, surface);
                 assert!(
                     ratio >= MIN_TEXT_CONTRAST,
@@ -337,9 +343,11 @@ mod tests {
     fn plain_text_is_legible_on_every_surface_it_can_appear_on() {
         for (ctor, _) in ALL_THEME_CTORS {
             let theme = ctor();
-            for (surface_name, surface) in
-                [("background", theme.background), ("card", theme.card), ("popover", theme.popover)]
-            {
+            for (surface_name, surface) in [
+                ("background", theme.background),
+                ("card", theme.card),
+                ("popover", theme.popover),
+            ] {
                 let ratio = contrast_ratio(theme.foreground, surface);
                 assert!(
                     ratio >= MIN_TEXT_CONTRAST,
