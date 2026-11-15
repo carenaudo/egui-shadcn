@@ -2,7 +2,7 @@
 
 impl super::sheet::Sheet {
     pub fn show(self, ctx: &egui::Context, open: &mut bool, content: impl FnOnce(&mut egui::Ui)) {
-        let anim_id = egui::Id::new("sheet_anim");
+        let anim_id = egui::Id::unique("sheet_anim");
         let anim_t = ctx.animate_bool_with_time(anim_id, *open, 0.2);
 
         if anim_t <= 0.0 {
@@ -16,7 +16,7 @@ impl super::sheet::Sheet {
         // Animated backdrop
         let backdrop_alpha = (60.0 * ease_t) as u8;
         let backdrop_layer =
-            egui::LayerId::new(egui::Order::Middle, egui::Id::new("sheet_backdrop"));
+            egui::LayerId::new(egui::Order::Middle, egui::Id::unique("sheet_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -24,7 +24,7 @@ impl super::sheet::Sheet {
         );
 
         // Backdrop click to close
-        let backdrop_response = egui::Area::new(egui::Id::new("sheet_backdrop_sense"))
+        let backdrop_response = egui::Area::new(egui::Id::unique("sheet_backdrop_sense"))
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
@@ -58,7 +58,7 @@ impl super::sheet::Sheet {
             ),
         };
 
-        egui::Area::new(egui::Id::new("sheet_panel"))
+        egui::Area::new(egui::Id::unique("sheet_panel"))
             .order(egui::Order::Foreground)
             .anchor(anchor, offset)
             .show(ctx, |ui| {

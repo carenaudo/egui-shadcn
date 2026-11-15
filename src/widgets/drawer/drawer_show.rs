@@ -2,7 +2,7 @@
 
 impl super::drawer::Drawer {
     pub fn show(self, ctx: &egui::Context, open: &mut bool, content: impl FnOnce(&mut egui::Ui)) {
-        let anim_id = egui::Id::new("drawer_anim");
+        let anim_id = egui::Id::unique("drawer_anim");
         let anim_t = ctx.animate_bool_with_time(anim_id, *open, 0.2);
 
         if anim_t <= 0.0 {
@@ -16,7 +16,7 @@ impl super::drawer::Drawer {
         // Animated backdrop
         let backdrop_alpha = (60.0 * ease_t) as u8;
         let backdrop_layer =
-            egui::LayerId::new(egui::Order::Middle, egui::Id::new("drawer_backdrop"));
+            egui::LayerId::new(egui::Order::Middle, egui::Id::unique("drawer_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -24,7 +24,7 @@ impl super::drawer::Drawer {
         );
 
         // Backdrop click to close
-        let backdrop_resp = egui::Area::new(egui::Id::new("drawer_backdrop_sense"))
+        let backdrop_resp = egui::Area::new(egui::Id::unique("drawer_backdrop_sense"))
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
@@ -40,7 +40,7 @@ impl super::drawer::Drawer {
         let cr_top = theme.radius.round() as u8 + 2;
         let slide_offset_y = (1.0 - ease_t) * 400.0;
 
-        egui::Area::new(egui::Id::new("drawer_panel"))
+        egui::Area::new(egui::Id::unique("drawer_panel"))
             .order(egui::Order::Foreground)
             .anchor(egui::Align2::CENTER_BOTTOM, egui::vec2(0.0, slide_offset_y))
             .show(ctx, |ui| {
@@ -81,7 +81,7 @@ impl super::drawer::Drawer {
                     );
 
                     // Track cumulative drag; close when dragged down past threshold
-                    let drag_id = egui::Id::new("drawer_drag_delta");
+                    let drag_id = egui::Id::unique("drawer_drag_delta");
                     let mut cumulative: f32 = ctx.data(|d| d.get_temp(drag_id).unwrap_or(0.0_f32));
                     if handle_resp.dragged() {
                         cumulative += handle_resp.drag_delta().y;

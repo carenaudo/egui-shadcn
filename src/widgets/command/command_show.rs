@@ -28,7 +28,7 @@ impl super::command::Command {
         // Backdrop
         let screen = ctx.input(|i| i.viewport_rect());
         let backdrop_layer =
-            egui::LayerId::new(egui::Order::Middle, egui::Id::new("command_backdrop"));
+            egui::LayerId::new(egui::Order::Middle, egui::Id::unique("command_backdrop"));
         ctx.layer_painter(backdrop_layer).rect_filled(
             screen,
             egui::CornerRadius::ZERO,
@@ -36,7 +36,7 @@ impl super::command::Command {
         );
 
         // Backdrop click to close
-        let backdrop_resp = egui::Area::new(egui::Id::new("command_backdrop_sense"))
+        let backdrop_resp = egui::Area::new(egui::Id::unique("command_backdrop_sense"))
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
@@ -80,7 +80,7 @@ impl super::command::Command {
         // A focused `TextEdit` claims Up/Down/Home/End/Enter for cursor
         // movement, so reading them later would mean the arrows moved the
         // caret instead of the selection.
-        let nav_id = egui::Id::new("command_palette_nav");
+        let nav_id = egui::Id::unique("command_palette_nav");
         let mut nav: NavState = ctx.data(|d| d.get_temp(nav_id)).unwrap_or_default();
         if nav.query != query {
             nav.query = query.clone();
@@ -134,7 +134,7 @@ impl super::command::Command {
 
         let cr = (theme.radius + 2.0).round() as u8;
 
-        egui::Area::new(egui::Id::new("command_palette"))
+        egui::Area::new(egui::Id::unique("command_palette"))
             .order(egui::Order::Foreground)
             .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, -60.0))
             .show(ctx, |ui| {

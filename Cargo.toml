@@ -2,6 +2,7 @@
 name = "egui-shadcn"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.95"
 authors = ["Pawel Jankiewicz <pjankiewicz@gmail.com>"]
 description = "shadcn/ui-inspired widget library for egui — buttons, inputs, selects, dialogs, and 50+ more components with light/dark theming"
 license = "MIT"
@@ -30,15 +31,12 @@ path = "src/lib.rs"
 # reports here is fixed rather than silenced.
 module_inception = "allow"
 
-# Vendored fork — see VENDORING.md. `egui`/`eframe` follow the workspace so a
-# future egui bump surfaces here as a compile error instead of a silent second
-# egui in the dependency graph. `egui_flex` 0.8 is the first release on 0.36.
 [dependencies]
-egui.workspace = true
-egui_flex = "0.8"
+egui = { version = "0.37", features = ["default_fonts"] }
+egui_flex = "0.9"
 
 [dev-dependencies]
-eframe.workspace = true
+eframe = "0.37"
 
 [[example]]
 name = "demo"

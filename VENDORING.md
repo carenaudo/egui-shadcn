@@ -7,19 +7,20 @@ This is a vendored fork of [egui-shadcn](https://github.com/pjankiewicz/egui-sha
 
 ---
 
-## 1. Compatibility Fixes (`egui 0.36` & Updated Cargo Packages)
+## 1. Compatibility Fixes (`egui 0.37` & Updated Cargo Packages)
 
 ### `Cargo.toml`
 | Dependency | Upstream | Here | Notes |
 |---|---|---|---|
-| `egui` | `0.33` | `0.36` | Workspace dependency |
-| `egui_flex` | `0.5` | `0.8` | First version on egui 0.36 |
-| `eframe` (dev) | `0.33` | `0.36` | Workspace dev-dependency |
+| `egui` | `0.33` | `0.37` | Enables `default_fonts` explicitly |
+| `egui_flex` | `0.5` | `0.9` | Uses egui 0.37 |
+| `eframe` (dev) | `0.33` | `0.37` | Native examples |
 
 The `web/` wasm demo crate (pinned `egui`/`eframe` `0.33`, workspace-`exclude`d)
 was removed rather than ported — it was already stale and unused.
 
 ### API Migrations
+- `egui 0.37` — Migrated root IDs to `Id::unique` and the resizable widget's UI ID to `Ui::scope_id`.
 - `src/theme/shadcn_theme_ext.rs` — Replaced deprecated `Context::style_mut` with `all_styles_mut` to maintain single-style window fill, stroke, and shadow overrides for popups.
 - `src/widgets/{input,textarea,input_group}` — Replaced boolean `.frame(false)` with `Frame::NONE.inner_margin(Margin::symmetric(4, 2))` to prevent 4px/2px layout shifts.
 - `Painter::rect_stroke` — Updated calls across widgets to match `egui 0.35` `StrokeKind` parameters.

@@ -23,8 +23,10 @@ impl super::alert_dialog::AlertDialog {
 
         // Backdrop
         let screen = ctx.viewport_rect();
-        let backdrop_layer =
-            egui::LayerId::new(egui::Order::Middle, egui::Id::new("alert_dialog_backdrop"));
+        let backdrop_layer = egui::LayerId::new(
+            egui::Order::Middle,
+            egui::Id::unique("alert_dialog_backdrop"),
+        );
         let painter = ctx.layer_painter(backdrop_layer);
         painter.rect_filled(
             screen,
@@ -35,7 +37,7 @@ impl super::alert_dialog::AlertDialog {
         let cr = (theme.radius + 2.0).round() as u8;
 
         // Dialog panel
-        egui::Area::new(egui::Id::new("alert_dialog_panel"))
+        egui::Area::new(egui::Id::unique("alert_dialog_panel"))
             .order(egui::Order::Foreground)
             .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
             .show(ctx, |ui| {

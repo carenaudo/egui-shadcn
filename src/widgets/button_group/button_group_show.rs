@@ -6,7 +6,7 @@
 impl super::button_group::ButtonGroup {
     /// The egui temp data key for the active button group context.
     pub fn context_key() -> egui::Id {
-        egui::Id::new("egui_shadcn_btn_group")
+        egui::Id::unique("egui_shadcn_btn_group")
     }
 
     /// Renders a connected button group. Pass buttons inside the closure.

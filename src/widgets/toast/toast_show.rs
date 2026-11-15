@@ -20,7 +20,7 @@ impl super::toast_state::ToastState {
         for (idx, toast) in self.toasts.iter().enumerate() {
             let offset_y = -(idx as f32 * (72.0 + spacing)) - 16.0;
 
-            egui::Area::new(egui::Id::new("toast").with(idx))
+            egui::Area::new(egui::Id::unique("toast").with(idx))
                 .order(egui::Order::Foreground)
                 .anchor(egui::Align2::RIGHT_BOTTOM, egui::vec2(-16.0, offset_y))
                 .show(ctx, |ui| {

@@ -20,7 +20,7 @@ impl super::resizable::Resizable {
         let handle_width: f32 = 8.0;
         let panel_height = self.height;
 
-        let seeded_id = ui.id().with("shadcn_resizable_seeded");
+        let seeded_id = ui.scope_id().with("shadcn_resizable_seeded");
         if !ui.data(|d| d.get_temp::<bool>(seeded_id).unwrap_or(false)) {
             *fraction = self.initial_fraction;
             ui.data_mut(|d| d.insert_temp(seeded_id, true));

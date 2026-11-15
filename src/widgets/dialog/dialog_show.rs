@@ -12,7 +12,7 @@ impl super::dialog::Dialog {
         // Backdrop
         let screen = ctx.input(|i| i.viewport_rect());
         let backdrop_layer =
-            egui::LayerId::new(egui::Order::Middle, egui::Id::new("dialog_backdrop"));
+            egui::LayerId::new(egui::Order::Middle, egui::Id::unique("dialog_backdrop"));
         let painter = ctx.layer_painter(backdrop_layer);
         painter.rect_filled(
             screen,
@@ -21,7 +21,7 @@ impl super::dialog::Dialog {
         );
 
         // Consume clicks on backdrop to close
-        let backdrop_response = egui::Area::new(egui::Id::new("dialog_backdrop_sense"))
+        let backdrop_response = egui::Area::new(egui::Id::unique("dialog_backdrop_sense"))
             .order(egui::Order::Middle)
             .anchor(egui::Align2::LEFT_TOP, egui::Vec2::ZERO)
             .show(ctx, |ui| {
@@ -38,7 +38,7 @@ impl super::dialog::Dialog {
         // Dialog panel
         let cr = (theme.radius + 2.0).round() as u8;
 
-        egui::Area::new(egui::Id::new("dialog_panel"))
+        egui::Area::new(egui::Id::unique("dialog_panel"))
             .order(egui::Order::Foreground)
             .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
             .show(ctx, |ui| {
