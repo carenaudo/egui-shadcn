@@ -14,8 +14,6 @@ impl super::calendar::Calendar {
         let mut clicked_day = None;
 
         *month = (*month).clamp(1, 12);
-        let days_in_month = Self::days_in_month(*year, *month);
-        let first_weekday = Self::day_of_week(*year, *month, 1);
 
         let cell_size: f32 = 36.0;
         let font_size: f32 = 13.0;
@@ -104,6 +102,8 @@ impl super::calendar::Calendar {
 
             // Day grid
             let mut day_counter: u32 = 0;
+            let days_in_month = Self::days_in_month(*year, *month);
+            let first_weekday = Self::day_of_week(*year, *month, 1);
             let total_cells = first_weekday + days_in_month;
             let rows = total_cells.div_ceil(7);
 

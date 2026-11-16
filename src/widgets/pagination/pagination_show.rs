@@ -2,15 +2,19 @@
 
 impl super::pagination::Pagination {
     /// Shows the pagination. `current` is the active page (0-indexed).
+    /// If there are no pages, navigation is disabled and `current` is preserved.
     pub fn show(self, ui: &mut egui::Ui, current: &mut usize) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
         let last_page = self.total_pages.saturating_sub(1);
+        if self.total_pages > 0 {
+            *current = (*current).min(last_page);
+        }
 
         ui.horizontal(|ui| {
             ui.spacing_mut().item_spacing.x = 4.0;
 
             // Previous button
-            let prev_enabled = *current > 0;
+            let prev_enabled = self.total_pages > 0 && *current > 0;
             let prev = self.icon_button(
                 ui,
                 &theme,
@@ -23,15 +27,11 @@ impl super::pagination::Pagination {
             }
 
             // Page numbers
-            let half = self.max_visible / 2;
-            let start = if *current <= half {
-                0
-            } else if *current + half >= last_page {
-                last_page.saturating_sub(self.max_visible - 1)
-            } else {
-                *current - half
-            };
-            let end = (start + self.max_visible).min(self.total_pages);
+            let visible = self.max_visible.min(self.total_pages);
+            let start = current
+                .saturating_sub(visible / 2)
+                .min(self.total_pages - visible);
+            let end = start + visible;
 
             if start > 0 {
                 let btn = self.page_button(ui, &theme, "1", false, true);

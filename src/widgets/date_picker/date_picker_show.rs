@@ -9,12 +9,6 @@ impl super::date_picker::DatePicker {
     ) -> egui::Response {
         let theme = crate::theme::shadcn_theme_ext::ShadcnThemeExt::shadcn_theme(ui.ctx());
 
-        // Initialize year/month if unset
-        if state.year == 0 {
-            state.year = 2026;
-            state.month = 1;
-        }
-
         let display_text = if state.is_set() {
             state.format()
         } else {
@@ -36,7 +30,8 @@ impl super::date_picker::DatePicker {
             ui.painter()
                 .layout_no_wrap(display_text, egui::FontId::proportional(14.0), text_color);
         let desired = egui::vec2(icon_size + gap + galley.size().x + h_padding * 2.0, height);
-        let (trigger_rect, btn_response) = ui.allocate_exact_size(desired, egui::Sense::click());
+        let (trigger_rect, mut btn_response) =
+            ui.allocate_exact_size(desired, egui::Sense::click());
 
         if ui.is_rect_visible(trigger_rect) {
             if btn_response.hovered() || btn_response.is_pointer_button_down_on() {
@@ -82,6 +77,8 @@ impl super::date_picker::DatePicker {
         }
 
         let popup_id = btn_response.id.with("date_picker_popup");
+        let browsing_id = popup_id.with("browsing_month");
+        let was_open = egui::Popup::is_id_open(ui.ctx(), popup_id);
 
         let toggle_cmd = if btn_response.clicked() {
             Some(egui::SetOpenCommand::Toggle)
@@ -104,18 +101,37 @@ impl super::date_picker::DatePicker {
 
         let popup = egui::Popup::new(popup_id, ui.ctx().clone(), &btn_response, ui.layer_id())
             .open_memory(toggle_cmd)
+            .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
             .frame(themed_frame);
 
-        let mut close_popup = false;
-
-        popup.show(|ui: &mut egui::Ui| {
+        let selection = popup.show(|ui: &mut egui::Ui| {
+            let initial_month = if state.year == 0 && !state.is_set() {
+                (2026, 1)
+            } else {
+                (state.year, state.month.clamp(1, 12))
+            };
+            let (mut year, mut month) = if was_open {
+                ui.data(|data| data.get_temp(browsing_id))
+                    .unwrap_or(initial_month)
+            } else {
+                initial_month
+            };
+            let mut selected_day = if (year, month) == (state.year, state.month) {
+                state.day
+            } else {
+                0
+            };
             let cal = crate::widgets::calendar::calendar::Calendar::new();
-            if let Some(_day) = cal.show(ui, &mut state.year, &mut state.month, &mut state.day) {
-                close_popup = true;
-            }
+            let day = cal.show(ui, &mut year, &mut month, &mut selected_day);
+            ui.data_mut(|data| data.insert_temp(browsing_id, (year, month)));
+            day.map(|day| (year, month, day))
         });
 
-        if close_popup {
+        if let Some((year, month, day)) = selection.and_then(|response| response.inner) {
+            if (state.year, state.month, state.day) != (year, month, day) {
+                *state = super::date_picker_state::DatePickerState { year, month, day };
+                btn_response.mark_changed();
+            }
             egui::Popup::close_id(ui.ctx(), popup_id);
             ui.ctx().request_repaint();
         }

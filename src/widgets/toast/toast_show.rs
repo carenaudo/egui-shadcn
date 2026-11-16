@@ -105,10 +105,23 @@ impl super::toast_state::ToastState {
         }
 
         // Remove dismissed toasts (reverse order to keep indices valid)
+        if !dismissed.is_empty() {
+            ctx.request_repaint();
+        }
         for idx in dismissed.into_iter().rev() {
             self.toasts.remove(idx);
         }
 
-        ctx.request_repaint();
+        if let Some(delay) = self
+            .toasts
+            .iter()
+            .filter_map(|toast| {
+                let remaining = toast.duration_secs - (current_time - toast.created_at);
+                std::time::Duration::try_from_secs_f64(remaining).ok()
+            })
+            .min()
+        {
+            ctx.request_repaint_after(delay);
+        }
     }
 }

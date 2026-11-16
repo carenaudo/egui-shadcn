@@ -15,8 +15,9 @@ impl Pagination {
         }
     }
 
+    /// Sets the size of the page window, with a minimum of one page.
     pub fn max_visible(mut self, max: usize) -> Self {
-        self.max_visible = max;
+        self.max_visible = max.max(1);
         self
     }
 }

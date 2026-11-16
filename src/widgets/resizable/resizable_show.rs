@@ -4,10 +4,11 @@ impl super::resizable::Resizable {
     /// Shows a horizontal split with draggable divider.
     ///
     /// `fraction` persists the split position across frames — pass
-    /// `&mut your_f32_state`. On the first frame for this [`egui::Ui`] it is
+    /// `&mut your_f32_state`. On the first frame for this split it is
     /// overwritten with the `initial_fraction` given to
     /// [`super::resizable::Resizable::new`], so the caller does not have to
-    /// duplicate that value in its own state initialiser.
+    /// duplicate that value in its own state initialiser. Give splits a distinct
+    /// [`Self::id_salt`] if their order can change.
     pub fn show(
         self,
         ui: &mut egui::Ui,
@@ -20,7 +21,10 @@ impl super::resizable::Resizable {
         let handle_width: f32 = 8.0;
         let panel_height = self.height;
 
-        let seeded_id = ui.scope_id().with("shadcn_resizable_seeded");
+        let seeded_id = self.id_salt.map_or_else(
+            || ui.auto_id_with("shadcn_resizable_seeded"),
+            |salt| ui.make_persistent_id(("shadcn_resizable_seeded", salt)),
+        );
         if !ui.data(|d| d.get_temp::<bool>(seeded_id).unwrap_or(false)) {
             *fraction = self.initial_fraction;
             ui.data_mut(|d| d.insert_temp(seeded_id, true));

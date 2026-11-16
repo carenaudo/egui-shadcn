@@ -57,27 +57,25 @@ impl super::area_chart::AreaChart {
             let line_color =
                 egui::Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), line_alpha);
 
-            // Build baseline: previous series smooth curve, or flat bottom
-            let baseline: Vec<egui::Pos2> = match &prev_smooth {
-                Some(prev) => prev.clone(),
-                None => smooth
-                    .iter()
-                    .map(|p| egui::pos2(p.x, plot_rect.max.y))
-                    .collect(),
-            };
-
             // Fill using a triangle-strip mesh (handles concave shapes correctly)
-            fill_between_curves(&painter, &smooth, &baseline, fill_color);
+            fill_between_curves(
+                &painter,
+                &smooth,
+                prev_smooth.as_deref(),
+                plot_rect.max.y,
+                fill_color,
+            );
 
             // Line on top
             if smooth.len() >= 2 {
-                painter.add(egui::Shape::line(
-                    smooth.clone(),
-                    egui::Stroke::new(1.5, line_color),
-                ));
+                let stroke = egui::Stroke::new(1.5, line_color);
+                if self.stacked {
+                    painter.add(egui::Shape::line(smooth.clone(), stroke));
+                    prev_smooth = Some(smooth);
+                } else {
+                    painter.add(egui::Shape::line(smooth, stroke));
+                }
             }
-
-            prev_smooth = Some(smooth);
         }
 
         // X-axis labels
@@ -155,15 +153,15 @@ impl super::area_chart::AreaChart {
     }
 }
 
-/// Fills the area between two curves using a triangle-strip mesh.
-/// Both curves must have the same length and matching X coordinates.
+/// Fills to a matching curve, or to the horizontal axis when no curve is given.
 fn fill_between_curves(
     painter: &egui::Painter,
     top: &[egui::Pos2],
-    bottom: &[egui::Pos2],
+    bottom: Option<&[egui::Pos2]>,
+    axis_y: f32,
     color: egui::Color32,
 ) {
-    if top.len() < 2 || top.len() != bottom.len() {
+    if top.len() < 2 || bottom.is_some_and(|points| top.len() != points.len()) {
         return;
     }
 
@@ -178,9 +176,9 @@ fn fill_between_curves(
             color,
         });
     }
-    for &p in bottom {
+    for (index, point) in top.iter().enumerate() {
         mesh.vertices.push(egui::epaint::Vertex {
-            pos: p,
+            pos: bottom.map_or_else(|| egui::pos2(point.x, axis_y), |points| points[index]),
             uv: white_uv,
             color,
         });
